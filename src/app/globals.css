@@ -3,6 +3,7 @@
 :root {
   --theme-blue-1: #637ab9;
   --theme-blue-2: #31326f;
+  --theme-turquoise-0: #f8fffe;
   --theme-turquoise-1: #a8fbd3;
   --theme-turquoise-2: #4fb7b3;
 }
@@ -12,6 +13,7 @@
   --color-foreground: var(--theme-blue-2);
   --color-theme-blue-1: var(--theme-blue-1);
   --color-theme-blue-2: var(--theme-blue-2);
+  --color-theme-turquoise-0: var(--theme-turquoise-0);
   --color-theme-turquoise-1: var(--theme-turquoise-1);
   --color-theme-turquoise-2: var(--theme-turquoise-2);
   --font-sans: var(--font-geist-sans);
@@ -40,5 +42,5 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
