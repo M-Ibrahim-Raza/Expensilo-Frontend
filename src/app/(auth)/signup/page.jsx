@@ -1,9 +1,9 @@
 "use client";
 
-import axios from "axios";
 import React from "react";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { signup } from "@/utils/auth";
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
 
@@ -17,42 +17,24 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const formData = {
-        name: nameRef.current?.value || "",
-        email: emailRef.current?.value || "",
-        password: passwordRef.current?.value || "",
-      };
+      const name = nameRef.current?.value || "";
+      const email = emailRef.current?.value || "";
+      const password = passwordRef.current?.value || "";
 
-      const response = await axios.post(
-        "http://127.0.0.1:8000/auth/signup",
-        formData,
-        {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await signup(name, email, password);
 
       router.push("/login");
-
       nameRef.current.value = "";
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(
-          err.response.data.detail || "Signup failed. Please try again."
-        );
-      } else {
-        setError("Network error. Please check your connection.");
-      }
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -98,7 +80,7 @@ export default function SignupPage() {
           )}
 
           <button
-            onClick={handleSubmit}
+            onClick={handleSignUp}
             disabled={loading}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
           >

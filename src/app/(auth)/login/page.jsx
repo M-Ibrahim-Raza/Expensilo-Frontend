@@ -1,7 +1,7 @@
 "use client";
 
-import axios from "axios";
 import React from "react";
+import { login } from "@/utils/auth";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import CardHeading from "../components/CardHeading";
@@ -16,40 +16,23 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const formData = {
-        email: emailRef.current?.value || "",
-        password: passwordRef.current?.value || "",
-      };
+      const email = emailRef.current?.value || "";
+      const password = passwordRef.current?.value || "";
 
-      const response = await axios.post(
-        "http://127.0.0.1:8000/auth/signup",
-        formData,
-        {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await login(email, password);
 
       router.push("/home");
 
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(
-          err.response.data.detail || "log in failed. Please try again."
-        );
-      } else {
-        setError("Network error. Please check your connection.");
-      }
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -58,7 +41,7 @@ export default function SignupPage() {
   return (
     <>
       <div className="bg-white rounded-3xl shadow-2xl p-8">
-        <CardHeading text={"Create Your Account"} />
+        <CardHeading text={"Login Your Account"} />
 
         <div className="space-y-5">
           <FormInput
@@ -86,7 +69,7 @@ export default function SignupPage() {
           )}
 
           <button
-            onClick={handleSubmit}
+            onClick={handleLogin}
             disabled={loading}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
           >
@@ -97,7 +80,7 @@ export default function SignupPage() {
         <p className="text-center mt-6 text-sm text-theme-blue-1">
           Don't have an account?{"  "}
           <a
-            href="/signin"
+            href="/signup"
             className="font-semibold hover:underline text-theme-blue-2"
           >
             Sign Up
