@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { verifyToken } from "@/utils/auth";
+import { verifyToken } from "@/api/auth";
 
 export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
