@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export default function Heading({
+export default function CardHeading({
   text,
   className = "text-2xl font-bold mb-6 text-center text-theme-blue-2",
 }) {

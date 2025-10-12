@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { login } from "@/utils/auth";
+import { login } from "@/api/auth";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import CardHeading from "../components/CardHeading";

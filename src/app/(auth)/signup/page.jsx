@@ -3,7 +3,7 @@
 import React from "react";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { signup } from "@/utils/auth";
+import { signup } from "@/api/auth";
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
 
@@ -94,7 +94,7 @@ export default function SignupPage() {
             href="/login"
             className="font-semibold hover:underline text-theme-blue-2"
           >
-            Sign Up
+            Log In
           </a>
         </p>
       </div>
