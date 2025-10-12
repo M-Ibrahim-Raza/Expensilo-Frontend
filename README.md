@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Expensilo
+
+A modern expense tracking application built with Next.js 15 and FastAPI, designed to help users manage their income and expenses efficiently.
+
+## Features
+
+- **User Authentication** - Secure login and signup functionality
+- **Expense Tracking** - Add and manage your expenses
+- **Protected Routes** - Secure pages requiring authentication
+- **Responsive Design** - Works seamlessly across all devices
+
+## Tech Stack
+
+### Frontend
+- **Next.js** 15.5.4 - React framework for production
+- **React** - UI library
+- **Tailwind CSS** - Styling
+
+### Backend
+- **FastAPI** - High-performance Python web framework
+
+## Project Structure
+
+```
+expensilo/
+├── api/                          # API integration layer
+│   ├── auth.js                   # Authentication API calls
+│   └── transaction.js            # Transaction API calls
+├── app/                          # Next.js app directory
+│   ├── (auth)/                   # Authentication routes group
+│   │   ├── components/           # Auth-specific components
+│   │   │   ├── BrandSection.jsx
+│   │   │   ├── CardHeading.jsx
+│   │   │   └── FormInput.jsx
+│   │   ├── layout.jsx            # Auth layout wrapper
+│   │   ├── login/
+│   │   │   └── page.jsx
+│   │   └── signup/
+│   │       └── page.jsx
+│   ├── (protected)/              # Protected routes group
+│   │   ├── home/
+│   │   │   ├── components/
+│   │   │   │   ├── AddExpenseButton.jsx
+│   │   │   │   ├── AddIncomeButton.jsx
+│   │   │   │   ├── TransactionCard.jsx
+│   │   │   │   └── TransactionModel.jsx
+│   │   │   └── page.jsx
+│   │   └── layout.jsx            # Protected routes layout
+│   ├── globals.css               # Global styles
+│   ├── layout.js                 # Root layout
+│   └── page.js                   # Home page
+├── components/                   # Shared components
+│   ├── auth/
+│   │   └── ProtectedRoute.jsx
+│   ├── forms/
+│   ├── layout/
+│   │   └── NavBar.jsx
+│   └── ui/
+│       └── LoadingSpinner.jsx
+├── constants/                    # Application constants
+├── styles/                       # Additional styles
+└── utils/                        # Utility functions
+    └── api.js                    # API configuration
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm or yarn
+- Python 3.8+ (for FastAPI backend)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd expensilo
+   ```
+
+2. **Install frontend dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. **Set up and run the FastAPI backend**
+   
+   Follow the backend setup instructions in your FastAPI server repository.
+
+6. **Open the application**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Available Routes
+
+### Public Routes
+- `/login` - User login page
+- `/signup` - User registration page
+
+### Protected Routes
+- `/home` - Main dashboard with transactions
+
+##  Development
+
+### Route Groups
+
+This project uses Next.js 15's route groups feature:
+- `(auth)` - Authentication-related pages
+- `(protected)` - Pages requiring authentication
+
+### Components Organization
+
+- **app/*/components/** - Route-specific components
+- **components/** - Shared, reusable components
+- **components/ui/** - UI primitives and common elements
+
+## Authentication
+
+The application uses a custom authentication system with protected routes. The `ProtectedRoute` component handles route protection and redirects unauthorized users to the login page.
+
+## Building for Production
 
 ```bash
-npm run dev
+npm run build
+npm start
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn build
+yarn start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Note:** Make sure your FastAPI backend server is running before starting the Next.js application to ensure full functionality.
