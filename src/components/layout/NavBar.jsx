@@ -24,13 +24,19 @@ export default function NavBar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="#expenses"
+              href="/home"
+              className="text-white hover:text-theme-turquoise-0 transition"
+            >
+              Home
+            </a>
+            <a
+              href="/expenses"
               className="text-white hover:text-theme-turquoise-0 transition"
             >
               Expenses
             </a>
             <a
-              href="#income"
+              href="/income"
               className="text-white hover:text-theme-turquoise-0 transition"
             >
               Income

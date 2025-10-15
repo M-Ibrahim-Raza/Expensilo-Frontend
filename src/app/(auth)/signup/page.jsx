@@ -19,22 +19,54 @@ export default function SignupPage() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    const name = nameRef.current?.value.trim() || "";
+    const email = emailRef.current?.value.trim() || "";
+    const password = passwordRef.current?.value || "";
+
+    if (!name) {
+      setError("Name is required");
+      return;
+    }
+
+    if (name.length < 3) {
+      setError("Full Name must be at least 3 characters");
+      return;
+    }
+
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Invalid email address");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const name = nameRef.current?.value || "";
-      const email = emailRef.current?.value || "";
-      const password = passwordRef.current?.value || "";
-
       await signup(name, email, password);
-
       router.push("/login");
+
       nameRef.current.value = "";
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {
-      setError(err.message);
+      setError("Failed to sign up");
     } finally {
       setLoading(false);
     }

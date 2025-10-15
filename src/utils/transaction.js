@@ -1,0 +1,43 @@
+export function getExpenses(transactions) {
+  return transactions.filter((transaction) => transaction.type === "EXPENSE");
+}
+
+export function getIncome(transactions) {
+  return transactions.filter((transaction) => transaction.type === "INCOME");
+}
+
+export function getTotalExpense(transactions) {
+  return transactions
+    .filter((transaction) => transaction.type === "EXPENSE")
+    .reduce(
+      (total, transaction) => total + (parseFloat(transaction.amount) || 0),
+      0
+    );
+}
+
+export function getTotalIncome(transactions) {
+  return transactions
+    .filter((transaction) => transaction.type === "INCOME")
+    .reduce(
+      (total, transaction) => total + (parseFloat(transaction.amount) || 0),
+      0
+    );
+}
+
+export function getTotalBalance(transactions) {
+  return getTotalIncome(transactions) - getTotalExpense(transactions);
+}
+
+export function filterTransactionsByDate(transactions, startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  start.setHours(0, 0, 0, 0);
+  end.setHours(23, 59, 59, 999);
+
+  const filtered = transactions.filter((txn) => {
+    const txnDate = new Date(txn.created_at);
+    return txnDate >= start && txnDate <= end;
+  });
+
+  return filtered;
+}
