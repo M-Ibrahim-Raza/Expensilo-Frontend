@@ -88,11 +88,13 @@ export default function TransactionModal({
               className="w-full px-4 py-3 rounded-xl border-2 border-theme-turquoise-1 bg-white focus:outline-none focus:ring-2 focus:ring-theme-turquoise-2 transition-all"
               placeholder="Select or type a category"
             />
+
             <datalist id="category-options">
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.name} />
               ))}
             </datalist>
+            
           </div>
 
           {/* Details */}

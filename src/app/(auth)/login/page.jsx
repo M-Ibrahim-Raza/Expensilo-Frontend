@@ -73,7 +73,7 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
           >
-            {loading ? "Creating Account..." : "Log In"}
+            {loading ? "Logging..." : "Log In"}
           </button>
         </div>
 
