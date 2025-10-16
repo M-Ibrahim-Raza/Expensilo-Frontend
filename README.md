@@ -4,19 +4,26 @@ A modern expense tracking application built with Next.js 15 and FastAPI, designe
 
 ## Features
 
-- **User Authentication** - Secure login and signup functionality
-- **Expense Tracking** - Add and manage your expenses
+- **JWT Authentication** – Secure user authentication using JSON Web Tokens.
 - **Protected Routes** - Secure pages requiring authentication
+- **Sign-Up & Login** – Register new users and login with validated credentials.
+- **Expense Tracking** - Add and manage your expenses
+- **Add Expense / Income** – Create new transactions with category, title, amount, and details.
+- **Update & Remove Transactions** – Edit or delete existing expense/income entries.
+- **Summary Component** – View total income, total expenses, and current balance with color-coded indicators.
+- **Date Period Filter** – Filter transactions by predefined periods (Today, Yesterday, This Week, Last Week, This Month, Last Month) or a custom date range.
 - **Responsive Design** - Works seamlessly across all devices
 
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js** 15.5.4 - React framework for production
 - **React** - UI library
 - **Tailwind CSS** - Styling
 
 ### Backend
+
 - **FastAPI** - High-performance Python web framework
 
 ## Project Structure
@@ -74,12 +81,14 @@ expensilo/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd expensilo
    ```
 
 2. **Install frontend dependencies**
+
    ```bash
    npm install
    # or
@@ -87,13 +96,15 @@ expensilo/
    ```
 
 3. **Set up environment variables**
-   
+
    Create a `.env.local` file in the root directory:
+
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:8000
    ```
 
 4. **Run the development server**
+
    ```bash
    npm run dev
    # or
@@ -101,33 +112,36 @@ expensilo/
    ```
 
 5. **Set up and run the FastAPI backend**
-   
+
    Follow the backend setup instructions in your FastAPI server repository.
 
 6. **Open the application**
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Available Routes
 
 ### Public Routes
+
 - `/login` - User login page
 - `/signup` - User registration page
 
 ### Protected Routes
+
 - `/home` - Main dashboard with transactions
 
-##  Development
+## Development
 
 ### Route Groups
 
 This project uses Next.js 15's route groups feature:
+
 - `(auth)` - Authentication-related pages
 - `(protected)` - Pages requiring authentication
 
 ### Components Organization
 
-- **app/*/components/** - Route-specific components
+- **app/\*/components/** - Route-specific components
 - **components/** - Shared, reusable components
 - **components/ui/** - UI primitives and common elements
 
