@@ -21,7 +21,7 @@ export default function ProtectedRoute({ children }) {
   }, [router]);
 
   if (loading) {
-    return <div className="text-center p-10">Checking authentication...</div>;
+    return <div className="text-center p-10">Loading...</div>;
   }
 
   return <>{children}</>;

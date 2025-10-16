@@ -1,5 +1,8 @@
 "use client";
 
+import CreatableSelect from "react-select/creatable";
+
+import { useState } from "react";
 export default function TransactionModal({
   showModal,
   setShowModal,
@@ -12,6 +15,13 @@ export default function TransactionModal({
   categories,
 }) {
   if (!showModal) return null;
+
+  const [options, setOptions] = useState(
+    categories.map((category) => ({
+      value: category.name,
+      label: category.name,
+    }))
+  );
 
   const isExpense = modalType === "EXPENSE";
   const headerColor = isExpense ? "bg-theme-red-2" : "bg-theme-turquoise-3";
@@ -71,6 +81,8 @@ export default function TransactionModal({
               placeholder="0.00"
             />
           </div>
+
+          {/* Category */}
           <div>
             <label
               htmlFor="category"
@@ -78,23 +90,56 @@ export default function TransactionModal({
             >
               Category
             </label>
-            <input
-              list="category-options"
-              id="category"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              className="w-full px-4 py-3 rounded-xl border-2 border-theme-turquoise-1 bg-white focus:outline-none focus:ring-2 focus:ring-theme-turquoise-2 transition-all"
-              placeholder="Select or type a category"
-            />
 
-            <datalist id="category-options">
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.name} />
-              ))}
-            </datalist>
-            
+            <CreatableSelect
+              options={options}
+              isClearable
+              isSearchable
+              placeholder="Select or type a category"
+              value={
+                options.find((opt) => opt.value === formData.category) || null
+              }
+              onChange={(option) =>
+                setFormData({
+                  ...formData,
+                  category: option ? option.value : "",
+                })
+              }
+              onCreateOption={(inputValue) => {
+                const newOption = { value: inputValue, label: inputValue };
+                setOptions((prev) => [...prev, newOption]);
+                setFormData({ ...formData, category: inputValue });
+              }}
+              classNames={{
+                control: ({ isFocused }) =>
+                  `w-full px-2 py-1.5 rounded-xl border-2 border-theme-turquoise-1 bg-white transition-all ${
+                    isFocused
+                      ? "outline-none ring-2 ring-theme-turquoise-2 border-theme-turquoise-2"
+                      : "border-theme-turquoise-1"
+                  }`,
+                placeholder: () => "text-gray-400 px-1",
+                singleValue: () => "text-gray-800 px-1",
+                menu: () =>
+                  "mt-1 border border-gray-200 rounded-xl shadow-lg bg-white z-50",
+                option: ({ isFocused, isSelected }) =>
+                  `cursor-pointer px-3 py-2 rounded-lg ${
+                    isSelected
+                      ? "bg-theme-turquoise-2 text-white"
+                      : isFocused
+                      ? "bg-theme-turquoise-1/10"
+                      : "bg-white text-gray-800"
+                  }`,
+                input: () => "text-gray-800",
+              }}
+              theme={(theme) => ({
+                ...theme,
+                colors: {
+                  ...theme.colors,
+                  primary25: "rgba(0, 150, 136, 0.1)", // light turquoise hover
+                  primary: "var(--theme-turquoise-2)", // main turquoise
+                },
+              })}
+            />
           </div>
 
           {/* Details */}

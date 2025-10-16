@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { login } from "@/api/auth";
 import { useState, useRef } from "react";
@@ -18,17 +17,37 @@ export default function SignupPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    const email = emailRef.current?.value || "";
+    const password = passwordRef.current?.value || "";
+
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Invalid email address");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const email = emailRef.current?.value || "";
-      const password = passwordRef.current?.value || "";
-
       await login(email, password);
-
       router.push("/home");
-
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {
