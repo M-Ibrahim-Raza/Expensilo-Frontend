@@ -1,45 +1,62 @@
 "use client";
 import React from "react";
 import { login } from "@/api/auth";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
+import { toast } from "react-toastify";
+import { useToastStore } from "@/stores/useToastStore";
 
 export default function SignupPage() {
   const router = useRouter();
-
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const { message, clearMessage } = useToastStore();
+
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    if (message && !hasShownToast.current) {
+      toast.success(message);
+      clearMessage();
+      hasShownToast.current = true;
+    }
+  }, [message, clearMessage]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setEmailError("");
+    setPasswordError("");
+
+    let isError = false;
 
     const email = emailRef.current?.value || "";
     const password = passwordRef.current?.value || "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
-      setError("Email is required");
-      return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Invalid email address");
-      return;
+      setEmailError("Email is required");
+      isError = true;
+    } else if (!emailPattern.test(email)) {
+      setEmailError("Invalid email address");
+      isError = true;
     }
 
     if (!password) {
-      setError("Password is required");
-      return;
+      setPasswordError("Password is required");
+      isError = true;
+      isError = true;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      isError = true;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (isError) {
       return;
     }
 
@@ -51,7 +68,7 @@ export default function SignupPage() {
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {
-      setError(err.message);
+      setPasswordError(err.message);
     } finally {
       setLoading(false);
     }
@@ -62,7 +79,7 @@ export default function SignupPage() {
       <div className="bg-white rounded-3xl shadow-2xl p-8">
         <CardHeading text={"Login Your Account"} />
 
-        <div className="space-y-5">
+        <div className="space-y-3">
           <FormInput
             type="email"
             id="email"
@@ -71,6 +88,12 @@ export default function SignupPage() {
             inputRef={emailRef}
             required
           />
+
+          {emailError && (
+            <div className="p-3 mb-6 rounded-xl text-sm bg-red-50 text-red-600">
+              {emailError}
+            </div>
+          )}
 
           <FormInput
             id="password"
@@ -81,9 +104,9 @@ export default function SignupPage() {
             required
           />
 
-          {error && (
-            <div className="p-3 rounded-xl text-sm bg-red-50 text-red-600">
-              {error}
+          {passwordError && (
+            <div className="p-3 mb-6 rounded-xl text-sm bg-red-50 text-red-600">
+              {passwordError}
             </div>
           )}
 
@@ -92,7 +115,7 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
           >
-            {loading ? "Logging..." : "Log In"}
+            {loading ? "Logging In..." : "Log In"}
           </button>
         </div>
 

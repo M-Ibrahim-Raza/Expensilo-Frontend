@@ -13,8 +13,13 @@ export default function TransactionModal({
   submitting,
   editingTransaction,
   categories,
+  balance,
 }) {
   if (!showModal) return null;
+
+  const [isFuture, setIsFuture] = useState(false);
+
+  const [isBalanceNegative, setIsBalanceNegative] = useState(false);
 
   const [options, setOptions] = useState(
     categories.map((category) => ({
@@ -69,17 +74,50 @@ export default function TransactionModal({
             >
               Amount *
             </label>
-            <input
-              id="amount"
-              type="number"
-              step="0.01"
-              value={formData.amount}
-              onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
-              }
-              className="w-full px-4 py-3 rounded-xl border-2 border-theme-turquoise-1 bg-white focus:outline-none focus:ring-2 focus:ring-theme-turquoise-2 transition-all"
-              placeholder="0.00"
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                Rs.
+              </span>
+              <input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.amount}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/[^\d.]/g, "");
+
+                  const parts = value.split(".");
+                  if (parts.length > 2) return;
+
+                  const integerPart = parts[0].slice(0, 8);
+                  const decimalPart = parts[1]?.slice(0, 2);
+                  value = decimalPart
+                    ? `${integerPart}.${decimalPart}`
+                    : integerPart;
+                  console.log(balance);
+                  console.log(value);
+                  if (value === "" || Number(value) >= 0) {
+                    if (modalType === "EXPENSE") {
+                      if (!(balance < 0)) {
+                        setIsBalanceNegative(Number(value) > balance);
+                        console.log(Number(value) > balance);
+                      } else {
+                        setIsBalanceNegative(false);
+                      }
+                    }
+                    setFormData({ ...formData, amount: value });
+                  }
+                }}
+                className="w-full px-4 py-3 pl-10 rounded-xl border-2 border-theme-turquoise-1 bg-white focus:outline-none focus:ring-2 focus:ring-theme-turquoise-2 transition-all"
+                placeholder="0.00"
+              />
+            </div>
+            {isBalanceNegative && (
+              <div className="p-3 mb-2 mt-2 rounded-xl text-sm bg-yellow-50 text-red-600">
+                ⚠︎ Amount exceeds available balance. Please double-check.
+              </div>
+            )}
           </div>
 
           {/* Category */}
@@ -88,7 +126,7 @@ export default function TransactionModal({
               htmlFor="category"
               className="block text-sm font-medium text-theme-blue-2 mb-1"
             >
-              Category
+              Category *
             </label>
 
             <CreatableSelect
@@ -135,11 +173,37 @@ export default function TransactionModal({
                 ...theme,
                 colors: {
                   ...theme.colors,
-                  primary25: "rgba(0, 150, 136, 0.1)", // light turquoise hover
-                  primary: "var(--theme-turquoise-2)", // main turquoise
+                  primary25: "rgba(0, 150, 136, 0.1)",
+                  primary: "var(--theme-turquoise-2)",
                 },
               })}
             />
+          </div>
+
+          {/* Date */}
+          <div>
+            <label
+              htmlFor="created_at"
+              className="block text-sm font-medium text-theme-blue-2 mb-1"
+            >
+              Date
+            </label>
+            <input
+              id="created_at"
+              type="date"
+              value={formData.created_at || ""}
+              onChange={(e) => {
+                const selectedDate = new Date(e.target.value);
+                setIsFuture(selectedDate > new Date());
+                return setFormData({ ...formData, created_at: e.target.value });
+              }}
+              className="w-full px-4 py-3 rounded-xl border-2 border-theme-turquoise-1 bg-white focus:outline-none focus:ring-2 focus:ring-theme-turquoise-2 transition-all"
+            />
+            {isFuture && (
+              <div className="p-3 mb-2 mt-2 rounded-xl text-sm bg-yellow-50 text-red-600">
+                ⚠︎ You’ve selected a future date. Please double-check it.
+              </div>
+            )}
           </div>
 
           {/* Details */}
@@ -174,7 +238,12 @@ export default function TransactionModal({
 
             <button
               onClick={handleSubmit}
-              disabled={submitting || !formData.title || !formData.amount}
+              disabled={
+                submitting ||
+                !formData.title ||
+                !formData.amount ||
+                !formData.category
+              }
               className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center ${
                 isExpense
                   ? "bg-theme-red-2 hover:bg-theme-red-3"

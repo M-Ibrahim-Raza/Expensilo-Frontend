@@ -67,7 +67,7 @@ export default function TransactionCard({
           <Edit className="w-4 h-4" />
         </button>
         <button
-          onClick={() => handleDelete(transaction.id)}
+          onClick={() => handleDelete(transaction.id,transaction.type)}
           className="p-1.5 bg-theme-red-2 hover:bg-theme-red-1 text-white rounded-lg transition"
         >
           <Trash2 className="w-4 h-4" />

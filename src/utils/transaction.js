@@ -1,9 +1,13 @@
 export function getExpenses(transactions) {
-  return transactions.filter((transaction) => transaction.type === "EXPENSE");
+  return transactions
+    .filter((transaction) => transaction.type === "EXPENSE")
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
 export function getIncome(transactions) {
-  return transactions.filter((transaction) => transaction.type === "INCOME");
+  return transactions
+    .filter((transaction) => transaction.type === "INCOME")
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
 export function getTotalExpense(transactions) {
@@ -40,4 +44,70 @@ export function filterTransactionsByDate(transactions, startDate, endDate) {
   });
 
   return filtered;
+}
+
+import axios from "axios";
+
+export async function downloadCSV(transactions) {
+  const data = { transactions: transactions };
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/transaction/export-csv`,
+      data,
+      {
+        responseType: "blob",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const blob = new Blob([response.data], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "transactions.csv");
+    document.body.appendChild(link);
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+    link.remove();
+  } catch (error) {
+    console.error("Error downloading CSV:", error);
+    alert("Failed to download CSV file");
+  }
+}
+
+export async function downloadPDF(transactions) {
+  const data = { transactions: transactions };
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/transaction/export-pdf`,
+      data,
+      {
+        responseType: "blob",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "transactions.pdf");
+    document.body.appendChild(link);
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+    link.remove();
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
+    alert("Failed to download PDF file");
+  }
 }

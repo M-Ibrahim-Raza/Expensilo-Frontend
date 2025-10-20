@@ -1,14 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import api from "@/utils/api";
 import AddExpenseButton from "./components/AddExpenseButton";
 import AddIncomeButton from "./components/AddIncomeButton";
 import TransactionCard from "./components/TransactionCard";
 import TransactionModal from "./components/TransactionModel";
 import Summary from "./components/Summary";
+import ExportDropdown from "./components/ExportDropdown";
 import DateSelector from "@/components/ui/DateSelector";
-import { filterTransactionsByDate } from "@/utils/transaction";
+import {
+  filterTransactionsByDate,
+  getTotalBalance,
+  getExpenses,
+} from "@/utils/transaction";
+import { toast } from "react-toastify";
 
 export default function HomePage() {
   const [transactions, setTransactions] = useState([]);
@@ -23,6 +30,7 @@ export default function HomePage() {
     title: "",
     amount: "",
     category: "",
+    created_at: new Date().toISOString().split("T")[0],
     details: "",
     attachments: [],
   });
@@ -68,6 +76,7 @@ export default function HomePage() {
       title: "",
       amount: "",
       category: "",
+      created_at: new Date().toISOString().split("T")[0],
       details: "",
       attachments: [],
     });
@@ -81,6 +90,7 @@ export default function HomePage() {
       title: transaction.title,
       amount: transaction.amount,
       category: transaction.category || "",
+      created_at: new Date(transaction.created_at).toISOString().split("T")[0],
       details: transaction.details || "",
       attachments: transaction.attachments || [],
     });
@@ -95,6 +105,7 @@ export default function HomePage() {
         amount: parseFloat(formData.amount),
         type: modalType,
         category: formData.category || undefined,
+        created_at: formData.created_at || undefined,
         details: formData.details || undefined,
         attachments:
           formData.attachments.length > 0 ? formData.attachments : undefined,
@@ -106,6 +117,11 @@ export default function HomePage() {
         await api.post("/users/transaction", payload);
       }
       setShowModal(false);
+      toast.success(
+        `${payload.type[0] + payload.type.slice(1).toLowerCase()} ${
+          editingTransaction ? "updated" : "added"
+        } successfully!`
+      );
       fetchTransactions();
       fetchCategories();
     } catch (error) {
@@ -115,9 +131,12 @@ export default function HomePage() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, type) => {
     try {
       await api.delete(`/users/transaction/${id}`);
+      toast.success(
+        `${type[0] + type.slice(1).toLowerCase()} deleted successfully!`
+      );
       fetchTransactions();
     } catch (error) {
       console.error("Error deleting transaction:", error);
@@ -137,16 +156,21 @@ export default function HomePage() {
           <AddIncomeButton openModal={openModal} />
         </div>
 
-        {/* Transactions Section */}
+        {/* Expenses Section */}
         <div className="bg-theme-turquoise-0 rounded-lg shadow-lg p-6 !pt-2">
-          <div className="flex justify-start">
-            <DateSelector
-              onDateChange={handleDateChange}
-              fetchTransactions={fetchTransactions}
-            />
+          <div className="flex items-center">
+            <div className="flex flex-1 justify-start">
+              <DateSelector
+                onDateChange={handleDateChange}
+                fetchTransactions={fetchTransactions}
+              />
+            </div>
+            <div className="flex flex-1 justify-end">
+              <ExportDropdown transactions={transactions} />
+            </div>
           </div>
           <h2 className="text-3xl uppercase font-bold font-sans text-theme-blue-2 mb-6 text-center">
-            Transactions
+            Expenses
           </h2>
 
           {loading ? (
@@ -160,7 +184,7 @@ export default function HomePage() {
           ) : (
             <div className="space-y-4">
               {/* Transactions Cards */}
-              {transactions.map((transaction) => (
+              {getExpenses(transactions).map((transaction) => (
                 <TransactionCard
                   key={transaction.id}
                   transaction={transaction}
@@ -183,6 +207,7 @@ export default function HomePage() {
         submitting={submitting}
         editingTransaction={editingTransaction}
         categories={categories}
+        balance={getTotalBalance(transactions)}
       />
     </>
   );
