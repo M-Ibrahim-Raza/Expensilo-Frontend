@@ -6,53 +6,63 @@ import { useRouter } from "next/navigation";
 import { signup } from "@/api/auth";
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
+import { useToastStore } from "@/stores/useToastStore";
 
 export default function SignupPage() {
   const router = useRouter();
-
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
-
+  const confirmPasswordRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const setMessage = useToastStore((state) => state.setMessage);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setError("");
+
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
+
+    let isError = false;
 
     const name = nameRef.current?.value.trim() || "";
     const email = emailRef.current?.value.trim() || "";
     const password = passwordRef.current?.value || "";
+    const confirmPassword = confirmPasswordRef.current?.value || "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!name) {
-      setError("Name is required");
-      return;
-    }
-
-    if (name.length < 3) {
-      setError("Full Name must be at least 3 characters");
-      return;
+      setNameError("Name is required");
+      isError = true;
+    } else if (name.length < 3) {
+      setNameError("Full Name must be at least 3 characters");
+      isError = true;
     }
 
     if (!email) {
-      setError("Email is required");
-      return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Invalid email address");
-      return;
+      setEmailError("Email is required");
+      isError = true;
+    } else if (!emailPattern.test(email)) {
+      setEmailError("Invalid email address");
+      isError = true;
     }
 
     if (!password) {
-      setError("Password is required");
-      return;
+      setPasswordError("Password is required");
+      isError = true;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      isError = true;
+    } else if (!(password === confirmPassword)) {
+      setPasswordError("Passwords do not match");
+      isError = true;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (isError) {
       return;
     }
 
@@ -60,13 +70,14 @@ export default function SignupPage() {
 
     try {
       await signup(name, email, password);
+      setMessage("Account created successfully!");
       router.push("/login");
-
       nameRef.current.value = "";
       emailRef.current.value = "";
       passwordRef.current.value = "";
+      confirmPasswordRef.current.value = "";
     } catch (err) {
-      setError("Failed to sign up");
+      setPasswordError(err.message);
     } finally {
       setLoading(false);
     }
@@ -77,7 +88,7 @@ export default function SignupPage() {
       <div className="bg-white rounded-3xl shadow-2xl p-8">
         <CardHeading text={"Create Your Account"} />
 
-        <div className="space-y-5">
+        <div className="space-y-2">
           <FormInput
             type="text"
             id="name"
@@ -86,6 +97,12 @@ export default function SignupPage() {
             inputRef={nameRef}
             required
           />
+
+          {nameError && (
+            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
+              {nameError}
+            </div>
+          )}
 
           <FormInput
             type="email"
@@ -96,6 +113,12 @@ export default function SignupPage() {
             required
           />
 
+          {emailError && (
+            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
+              {emailError}
+            </div>
+          )}
+
           <FormInput
             id="password"
             label="Password"
@@ -105,9 +128,18 @@ export default function SignupPage() {
             required
           />
 
-          {error && (
-            <div className="p-3 rounded-xl text-sm bg-red-50 text-red-600">
-              {error}
+          <FormInput
+            id="password"
+            label="Confirm Password"
+            placeholder="confirm your password"
+            is_password
+            inputRef={confirmPasswordRef}
+            required
+          />
+
+          {passwordError && (
+            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
+              {passwordError}
             </div>
           )}
 

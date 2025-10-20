@@ -6,9 +6,12 @@ import AddIncomeButton from "@/app/(protected)/home/components/AddIncomeButton";
 import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
 import { getIncome } from "@/utils/transaction";
-import { getTotalIncome } from "@/utils/transaction";
+import { getTotalIncome, filterTransactionsByDate } from "@/utils/transaction";
+import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
+import DateSelector from "@/components/ui/DateSelector";
+import { toast } from "react-toastify";
 
-export default function HomePage() {
+export default function IncomePage() {
   const [income, setIncome] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -21,6 +24,7 @@ export default function HomePage() {
     title: "",
     amount: "",
     category: "",
+    created_at: new Date().toISOString().split("T")[0],
     details: "",
     attachments: [],
   });
@@ -35,8 +39,8 @@ export default function HomePage() {
       setLoading(true);
       const response = await api.get("/users/transaction");
       const income_data = getIncome(response.data.transactions || []);
-
       setIncome(income_data);
+      return income_data;
     } catch (error) {
       console.error("Error fetching Income:", error);
     } finally {
@@ -53,6 +57,12 @@ export default function HomePage() {
     }
   };
 
+  const handleDateChange = async (start, end) => {
+    const response = await fetchIncome();
+    const result = filterTransactionsByDate(response, start, end);
+    setIncome(result);
+  };
+
   const openModal = (type) => {
     setModalType(type);
     setEditingTransaction(null);
@@ -60,19 +70,21 @@ export default function HomePage() {
       title: "",
       amount: "",
       category: "",
+      created_at: new Date().toISOString().split("T")[0],
       details: "",
       attachments: [],
     });
     setShowModal(true);
   };
 
-  const openEditModal = (transaction) => {
+  const openEditModal = async (transaction) => {
     setModalType(transaction.type);
     setEditingTransaction(transaction);
     setFormData({
       title: transaction.title,
       amount: transaction.amount,
       category: transaction.category || "",
+      created_at: new Date(transaction.created_at).toISOString().split("T")[0],
       details: transaction.details || "",
       attachments: transaction.attachments || [],
     });
@@ -87,6 +99,7 @@ export default function HomePage() {
         amount: parseFloat(formData.amount),
         type: modalType,
         category: formData.category || undefined,
+        created_at: formData.created_at || undefined,
         details: formData.details || undefined,
         attachments:
           formData.attachments.length > 0 ? formData.attachments : undefined,
@@ -98,7 +111,13 @@ export default function HomePage() {
         await api.post("/users/transaction", payload);
       }
       setShowModal(false);
+      toast.success(
+        `${payload.type[0] + payload.type.slice(1).toLowerCase()} ${
+          editingTransaction ? "updated" : "added"
+        } successfully!`
+      );
       fetchIncome();
+      fetchCategories();
     } catch (error) {
       console.error("Error saving transaction:", error);
     } finally {
@@ -106,9 +125,12 @@ export default function HomePage() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, type) => {
     try {
       await api.delete(`/users/transaction/${id}`);
+      toast.success(
+        `${type[0] + type.slice(1).toLowerCase()} deleted successfully!`
+      );
       fetchIncome();
     } catch (error) {
       console.error("Error deleting transaction:", error);
@@ -122,13 +144,14 @@ export default function HomePage() {
         <div className="flex justify-around items-center border-2 border-white px-4 py-3 mb-2 bg-gradient-to-r from-theme-turquoise-3 to-theme-green-3 rounded-md">
           <div className="text-2xl font-semibold text-white">Total Income</div>
           <div className="text-2xl font-bold text-white">
-            - Rs.{" "}
+            Rs.{" "}
             {parseFloat(getTotalIncome(income)).toLocaleString(undefined, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             })}
           </div>
         </div>
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row my-8 justify-center">
           <div className="flex w-1/2">
@@ -137,7 +160,18 @@ export default function HomePage() {
         </div>
 
         {/* Transactions Section */}
-        <div className="bg-theme-turquoise-0 rounded-lg shadow-lg p-6">
+        <div className="bg-theme-turquoise-0 rounded-lg shadow-lg p-6 !pt-2">
+          <div className="flex items-center">
+            <div className="flex flex-1 justify-start">
+              <DateSelector
+                onDateChange={handleDateChange}
+                fetchTransactions={fetchIncome}
+              />
+            </div>
+            <div className="flex flex-1 justify-end">
+              <ExportDropdown transactions={income} />
+            </div>
+          </div>
           <h2 className="text-3xl uppercase font-bold font-sans text-theme-blue-2 mb-6 text-center">
             Income
           </h2>
@@ -152,7 +186,7 @@ export default function HomePage() {
             </p>
           ) : (
             <div className="space-y-4">
-              {/* Income Cards */}
+              {/* Transactions Cards */}
               {income.map((transaction) => (
                 <TransactionCard
                   key={transaction.id}
