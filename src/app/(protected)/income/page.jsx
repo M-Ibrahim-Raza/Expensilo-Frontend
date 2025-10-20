@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import api from "@/utils/api";
+import IncomeSummary from "./components/IncomeSummary";
 import AddIncomeButton from "@/app/(protected)/home/components/AddIncomeButton";
 import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
 import { getIncome } from "@/utils/transaction";
-import { getTotalIncome, filterTransactionsByDate } from "@/utils/transaction";
+import { filterTransactionsByDate } from "@/utils/transaction";
 import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
 import DateSelector from "@/components/ui/DateSelector";
 import { toast } from "react-toastify";
@@ -141,17 +142,7 @@ export default function IncomePage() {
     <>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-around items-center border-2 border-white px-4 py-3 mb-2 bg-gradient-to-r from-theme-turquoise-3 to-theme-green-3 rounded-md">
-          <div className="text-2xl font-semibold text-white">Total Income</div>
-          <div className="text-2xl font-bold text-white">
-            Rs.{" "}
-            {parseFloat(getTotalIncome(income)).toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            })}
-          </div>
-        </div>
-
+        <IncomeSummary income={income} />
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row my-8 justify-center">
           <div className="flex w-1/2">

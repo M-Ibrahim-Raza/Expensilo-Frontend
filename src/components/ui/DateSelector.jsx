@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -14,10 +14,25 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
       key: "selection",
     },
   ]);
+  const dateSelectorRef = useRef(null);
 
   const [isFilter, setFilter] = useState(false);
 
   const toggleOpen = () => setIsOpen((prev) => !prev);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        dateSelectorRef.current &&
+        !dateSelectorRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  });
 
   const handleSelect = () => {
     onDateChange(range[0].startDate, range[0].endDate);
@@ -37,7 +52,7 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow p-2 max-w-md min-w-1/4 relative">
+    <div className="bg-white rounded-2xl shadow p-2 max-w-md min-w-1/4 relative" ref={dateSelectorRef}>
       {/* Header */}
       <button
         onClick={toggleOpen}

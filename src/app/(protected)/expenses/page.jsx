@@ -6,10 +6,11 @@ import AddExpenseButton from "@/app/(protected)/home/components/AddExpenseButton
 import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
 import { getExpenses } from "@/utils/transaction";
-import { getTotalExpense, filterTransactionsByDate } from "@/utils/transaction";
+import { filterTransactionsByDate } from "@/utils/transaction";
 import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
 import DateSelector from "@/components/ui/DateSelector";
 import { toast } from "react-toastify";
+import ExpenseSummary from "./components/ExpenseSummary";
 
 export default function HomePage() {
   const [expenses, setExpenses] = useState([]);
@@ -40,6 +41,7 @@ export default function HomePage() {
       const response = await api.get("/users/transaction");
       const expenses_data = getExpenses(response.data.transactions || []);
       setExpenses(expenses_data);
+      return expenses_data;
     } catch (error) {
       console.error("Error fetching expenses:", error);
     } finally {
@@ -57,9 +59,9 @@ export default function HomePage() {
   };
 
   const handleDateChange = async (start, end) => {
-    const response = await fetchIncome();
+    const response = await fetchExpenses();
     const result = filterTransactionsByDate(response, start, end);
-    setIncome(result);
+    setExpenses(result);
   };
 
   const openModal = (type) => {
@@ -124,7 +126,7 @@ export default function HomePage() {
     }
   };
 
-  const handleDelete = async (id,type) => {
+  const handleDelete = async (id, type) => {
     try {
       await api.delete(`/users/transaction/${id}`);
       toast.success(
@@ -140,18 +142,7 @@ export default function HomePage() {
     <>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-around items-center border-2 border-white px-4 py-3 mb-2 bg-gradient-to-r from-theme-red-1 to-theme-red-2 rounded-md">
-          <div className="text-2xl font-semibold text-white">
-            Total Expenses
-          </div>
-          <div className="text-2xl font-bold text-white">
-            - Rs.{" "}
-            {parseFloat(getTotalExpense(expenses)).toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            })}
-          </div>
-        </div>
+        <ExpenseSummary expense={expenses} />
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row my-8 justify-center">
           <div className="flex w-1/2">
