@@ -10,6 +10,23 @@ export function getIncome(transactions) {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
+export function getCategoryDistribution(transactions) {
+  const categoryTotals = transactions.reduce((acc, transaction) => {
+    const { category, amount } = transaction;
+    const numericAmount = parseFloat(amount);
+
+    if (!acc[category]) {
+      acc[category] = numericAmount;
+    } else {
+      acc[category] += numericAmount;
+    }
+
+    return acc;
+  }, {});
+
+  return Object.entries(categoryTotals);
+}
+
 export function getTotalExpense(transactions) {
   return transactions
     .filter((transaction) => transaction.type === "EXPENSE")

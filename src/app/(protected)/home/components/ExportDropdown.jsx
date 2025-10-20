@@ -1,9 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { downloadCSV, downloadPDF } from "@/utils/transaction";
 
 export default function ExportDropdown({ transactions }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleDownloadCSV = async () => {
     await downloadCSV(transactions);
@@ -16,7 +28,7 @@ export default function ExportDropdown({ transactions }) {
   };
 
   return (
-    <div className="relative inline-block text-center">
+    <div className="relative inline-block text-center" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         type="button"

@@ -179,7 +179,7 @@ export default function HomePage() {
             </div>
           ) : getExpenses(transactions).length === 0 ? (
             <p className="text-theme-blue-2 text-center py-8">
-              No Transactions Yet. Add Your First Transaction!
+              No Expenses Yet. Add Your First Expense!
             </p>
           ) : (
             <div className="space-y-4">
