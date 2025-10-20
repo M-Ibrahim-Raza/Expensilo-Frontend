@@ -177,7 +177,7 @@ export default function HomePage() {
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-blue-2"></div>
             </div>
-          ) : transactions.length === 0 ? (
+          ) : getExpenses(transactions).length === 0 ? (
             <p className="text-theme-blue-2 text-center py-8">
               No Transactions Yet. Add Your First Transaction!
             </p>
