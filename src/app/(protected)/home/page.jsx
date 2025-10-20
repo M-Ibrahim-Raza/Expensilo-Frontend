@@ -166,7 +166,7 @@ export default function HomePage() {
               />
             </div>
             <div className="flex flex-1 justify-end">
-              <ExportDropdown transactions={transactions} />
+              <ExportDropdown transactions={getExpenses(transactions)} />
             </div>
           </div>
           <h2 className="text-3xl uppercase font-bold font-sans text-theme-blue-2 mb-6 text-center">
