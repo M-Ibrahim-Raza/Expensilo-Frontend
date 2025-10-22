@@ -8,7 +8,6 @@ export function useDate(transactions = []) {
   });
 
   const filteredTransactions = useMemo(() => {
-    console.log(dateRange);
     if (!dateRange.start || !dateRange.end) {
       return transactions;
     }

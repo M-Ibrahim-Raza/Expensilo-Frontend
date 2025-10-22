@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "@/utils/api";
-import { env } from "@/env.mjs";
+import { env } from "@/env.js";
 
 export async function fetchTransactions() {
   try {
