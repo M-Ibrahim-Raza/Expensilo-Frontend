@@ -1,35 +1,39 @@
 "use client";
-import React from "react";
-import { login } from "@/api/auth";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+import { login } from "@/api/auth";
+import { useSignUpToastStore } from "@/stores/useSignUpToastStore";
+
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
-import { toast } from "react-toastify";
-import { useToastStore } from "@/stores/useToastStore";
+
+import { notifySuccess } from "@/utils/notifications";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+  const hasShownSignUpToast = useRef(false);
 
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const { message, clearMessage } = useToastStore();
 
-  const hasShownToast = useRef(false);
+  const { signUpMessage, clearSignUpMessage } = useSignUpToastStore();
 
   useEffect(() => {
-    if (message && !hasShownToast.current) {
-      toast.success(message);
-      clearMessage();
-      hasShownToast.current = true;
+    if (signUpMessage && !hasShownSignUpToast.current) {
+      notifySuccess(signUpMessage);
+      clearSignUpMessage();
+      hasShownSignUpToast.current = true;
     }
-  }, [message, clearMessage]);
+  }, [signUpMessage]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     setEmailError("");
     setPasswordError("");
 
@@ -37,6 +41,7 @@ export default function SignupPage() {
 
     const email = emailRef.current?.value || "";
     const password = passwordRef.current?.value || "";
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
@@ -49,7 +54,6 @@ export default function SignupPage() {
 
     if (!password) {
       setPasswordError("Password is required");
-      isError = true;
       isError = true;
     } else if (password.length < 6) {
       setPasswordError("Password must be at least 6 characters");
@@ -64,7 +68,9 @@ export default function SignupPage() {
 
     try {
       await login(email, password);
+
       router.push("/home");
+
       emailRef.current.value = "";
       passwordRef.current.value = "";
     } catch (err) {

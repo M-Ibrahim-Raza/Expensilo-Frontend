@@ -95,13 +95,17 @@ export default function TransactionModal({
                   value = decimalPart
                     ? `${integerPart}.${decimalPart}`
                     : integerPart;
-                  console.log(balance);
-                  console.log(value);
                   if (value === "" || Number(value) >= 0) {
                     if (modalType === "EXPENSE") {
                       if (!(balance < 0)) {
-                        setIsBalanceNegative(Number(value) > balance);
-                        console.log(Number(value) > balance);
+                        if (editingTransaction) {
+                          setIsBalanceNegative(
+                            Number(value) >
+                              balance + Number(editingTransaction.amount)
+                          );
+                        } else {
+                          setIsBalanceNegative(Number(value) > balance);
+                        }
                       } else {
                         setIsBalanceNegative(false);
                       }

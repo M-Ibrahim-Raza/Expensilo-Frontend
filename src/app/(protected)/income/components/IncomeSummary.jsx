@@ -1,14 +1,11 @@
 "use client";
 import { getCategoryDistribution, getTotalIncome } from "@/utils/transaction";
-import { useEffect } from "react";
 import { Chart } from "react-google-charts";
 
 export default function IncomeSummary({ income }) {
   const data = getCategoryDistribution(income);
 
   data.unshift(["Category", "Amount"]);
-
-  //   console.log(data);
 
   const options = {
     legend: {

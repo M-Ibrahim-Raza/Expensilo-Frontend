@@ -1,24 +1,26 @@
 "use client";
 
-import React from "react";
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signup } from "@/api/auth";
 import CardHeading from "../components/CardHeading";
 import FormInput from "../components/FormInput";
-import { useToastStore } from "@/stores/useToastStore";
+import { useSignUpToastStore } from "@/stores/useSignUpToastStore";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
+
   const [loading, setLoading] = useState(false);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const setMessage = useToastStore((state) => state.setMessage);
+
+  const { setSignUpMessage } = useSignUpToastStore();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -33,6 +35,7 @@ export default function SignupPage() {
     const email = emailRef.current?.value.trim() || "";
     const password = passwordRef.current?.value || "";
     const confirmPassword = confirmPasswordRef.current?.value || "";
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!name) {
@@ -70,8 +73,11 @@ export default function SignupPage() {
 
     try {
       await signup(name, email, password);
-      setMessage("Account created successfully!");
+
+      setSignUpMessage("Account created successfully!");
+
       router.push("/login");
+
       nameRef.current.value = "";
       emailRef.current.value = "";
       passwordRef.current.value = "";
@@ -162,6 +168,7 @@ export default function SignupPage() {
           </a>
         </p>
       </div>
+
       <p className="text-center mt-6 text-sm text-theme-blue-2">
         By signing up, you agree to our Terms & Privacy Policy
       </p>

@@ -32,7 +32,7 @@ export async function login(email, password) {
     return access_token;
   } catch (error) {
     if (error.response && error.response.data) {
-      throw new Error(error.response.data.detail || "Signup failed.");
+      throw new Error(error.response.data.detail || "Login failed.");
     } else {
       throw new Error("Network error. Please check your connection.");
     }
@@ -43,8 +43,12 @@ export async function verifyToken() {
   try {
     const res = await api.get("/auth/verify-token");
     return res.data;
-  } catch (err) {
-    console.error("Token verification failed:", err);
+  } catch (error) {
+    const msg =
+      error?.response?.data?.detail ||
+      error?.message ||
+      "Token verification failed.";
+    throw new Error(msg);
   }
 }
 

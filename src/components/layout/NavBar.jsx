@@ -41,12 +41,12 @@ export default function NavBar() {
             >
               Income
             </a>
-            <a
+            {/* <a
               href="#analytics"
               className="text-white hover:text-theme-turquoise-0 transition"
             >
               Analytics
-            </a>
+            </a> */}
 
             {/* Profile Dropdown */}
             <div className="relative">
