@@ -1,152 +1,72 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from "@/utils/api";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useCategories } from "@/hooks/useCategories";
+import { useTransactionModel } from "@/hooks/useTransactionModal";
+import { useDate } from "@/hooks/useDate";
+
+import DateSelector from "@/components/ui/DateSelector";
+import ExpenseSummary from "./components/ExpenseSummary";
 import AddExpenseButton from "@/app/(protected)/home/components/AddExpenseButton";
+import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
 import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
-import { getExpenses } from "@/utils/transaction";
-import { filterTransactionsByDate } from "@/utils/transaction";
-import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
-import DateSelector from "@/components/ui/DateSelector";
-import { toast } from "react-toastify";
-import ExpenseSummary from "./components/ExpenseSummary";
+import { getExpenses,getTotalBalance } from "@/utils/transaction";
 
-export default function HomePage() {
-  const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("EXPENSE");
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [loading, setLoading] = useState(false);
+export default function ExpensePage() {
+  const {
+    transactions,
+    loading,
+    setTransactions,
+    loadTransactions,
+    addOrUpdateTransaction,
+    handleDeleteTransaction,
+  } = useTransactions();
+
+  const { categories, loadCategories } = useCategories();
+
+  const {
+    showModal,
+    modalType,
+    formData,
+    editingTransaction,
+    setShowModal,
+    setFormData,
+    openNewModal,
+    openEditModal,
+  } = useTransactionModel();
+
+  const { setDateRange, filteredTransactions } = useDate(transactions);
+
   const [submitting, setSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    amount: "",
-    category: "",
-    created_at: new Date().toISOString().split("T")[0],
-    details: "",
-    attachments: [],
-  });
-
-  useEffect(() => {
-    fetchExpenses();
-    fetchCategories();
-  }, []);
-
-  const fetchExpenses = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/users/transaction");
-      const expenses_data = getExpenses(response.data.transactions || []);
-      setExpenses(expenses_data);
-      return expenses_data;
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get("/users/category");
-      setCategories(response.data.categories || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  const handleDateChange = async (start, end) => {
-    const response = await fetchExpenses();
-    const result = filterTransactionsByDate(response, start, end);
-    setExpenses(result);
-  };
-
-  const openModal = (type) => {
-    setModalType(type);
-    setEditingTransaction(null);
-    setFormData({
-      title: "",
-      amount: "",
-      category: "",
-      created_at: new Date().toISOString().split("T")[0],
-      details: "",
-      attachments: [],
-    });
-    setShowModal(true);
-  };
-
-  const openEditModal = (transaction) => {
-    setModalType(transaction.type);
-    setEditingTransaction(transaction);
-    setFormData({
-      title: transaction.title,
-      amount: transaction.amount,
-      category: transaction.category || "",
-      created_at: new Date(transaction.created_at).toISOString().split("T")[0],
-      details: transaction.details || "",
-      attachments: transaction.attachments || [],
-    });
-    setShowModal(true);
-  };
-
   const handleSubmit = async () => {
-    try {
-      setSubmitting(true);
-      const payload = {
-        title: formData.title,
-        amount: parseFloat(formData.amount),
-        type: modalType,
-        category: formData.category || undefined,
-        created_at: formData.created_at || undefined,
-        details: formData.details || undefined,
-        attachments:
-          formData.attachments.length > 0 ? formData.attachments : undefined,
-      };
-
-      if (editingTransaction) {
-        await api.put(`/users/transaction/${editingTransaction.id}`, payload);
-      } else {
-        await api.post("/users/transaction", payload);
-      }
-      setShowModal(false);
-      toast.success(
-        `${payload.type[0] + payload.type.slice(1).toLowerCase()} ${
-          editingTransaction ? "updated" : "added"
-        } successfully!`
-      );
-      fetchExpenses();
-      fetchCategories();
-    } catch (error) {
-      console.error("Error saving transaction:", error);
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitting(true);
+    const payload = {
+      title: formData.title,
+      amount: parseFloat(formData.amount),
+      type: modalType,
+      category: formData.category || undefined,
+      created_at: formData.created_at || undefined,
+      details: formData.details || undefined,
+      attachments:
+        formData.attachments.length > 0 ? formData.attachments : undefined,
+    };
+    await addOrUpdateTransaction(payload, editingTransaction);
+    loadCategories();
+    setShowModal(false);
+    setSubmitting(false);
   };
-
-  const handleDelete = async (id, type) => {
-    try {
-      await api.delete(`/users/transaction/${id}`);
-      toast.success(
-        `${type[0] + type.slice(1).toLowerCase()} deleted successfully!`
-      );
-      fetchExpenses();
-    } catch (error) {
-      console.error("Error deleting transaction:", error);
-    }
-  };
-
   return (
     <>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ExpenseSummary expense={expenses} />
+        <ExpenseSummary expense={getExpenses(filteredTransactions)} />
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row my-8 justify-center">
           <div className="flex w-1/2">
-            <AddExpenseButton openModal={openModal} />
+            <AddExpenseButton openModal={openNewModal} />
           </div>
         </div>
 
@@ -154,13 +74,12 @@ export default function HomePage() {
         <div className="bg-theme-turquoise-0 rounded-lg shadow-lg p-6 !pt-2">
           <div className="flex items-center">
             <div className="flex flex-1 justify-start">
-              <DateSelector
-                onDateChange={handleDateChange}
-                fetchTransactions={fetchExpenses}
-              />
+              <DateSelector onDateChange={setDateRange} />
             </div>
             <div className="flex flex-1 justify-end">
-              <ExportDropdown transactions={expenses} />
+              <ExportDropdown
+                transactions={getExpenses(filteredTransactions)}
+              />
             </div>
           </div>
           <h2 className="text-3xl uppercase font-bold font-sans text-theme-blue-2 mb-6 text-center">
@@ -171,19 +90,21 @@ export default function HomePage() {
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-blue-2"></div>
             </div>
-          ) : expenses.length === 0 ? (
+          ) : getExpenses(filteredTransactions).length === 0 ? (
             <p className="text-theme-blue-2 text-center py-8">
               No Expenses Yet. Add Your First Expense!
             </p>
           ) : (
             <div className="space-y-4">
               {/* Transactions Cards */}
-              {expenses.map((transaction) => (
+              {getExpenses(filteredTransactions).map((transaction) => (
                 <TransactionCard
                   key={transaction.id}
                   transaction={transaction}
                   openEditModal={openEditModal}
-                  handleDelete={handleDelete}
+                  handleDelete={() =>
+                    handleDeleteTransaction(transaction.id, transaction.type)
+                  }
                 />
               ))}
             </div>
@@ -201,6 +122,7 @@ export default function HomePage() {
         submitting={submitting}
         editingTransaction={editingTransaction}
         categories={categories}
+        balance={getTotalBalance(filteredTransactions)}
       />
     </>
   );

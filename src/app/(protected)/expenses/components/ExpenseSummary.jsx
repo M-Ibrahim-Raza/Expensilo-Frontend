@@ -1,6 +1,7 @@
 "use client";
-import { getCategoryDistribution, getTotalExpense } from "@/utils/transaction";
+
 import { Chart } from "react-google-charts";
+import { getCategoryDistribution, getTotalExpense } from "@/utils/transaction";
 
 export default function ExpenseSummary({ expense }) {
   const data = getCategoryDistribution(expense);

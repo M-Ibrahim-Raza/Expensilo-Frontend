@@ -5,8 +5,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { ChevronDown, ChevronUp, Calendar } from "lucide-react";
 
-export default function DateSelector({ onDateChange, fetchTransactions }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function DateSelector({ onDateChange }) {
   const [range, setRange] = useState([
     {
       startDate: new Date(),
@@ -14,9 +13,15 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
       key: "selection",
     },
   ]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isFilter, setFilter] = useState(false);
+
   const dateSelectorRef = useRef(null);
 
-  const [isFilter, setFilter] = useState(false);
+  const handleDateChange = (item) => {
+    const newRange = [item.selection];
+    setRange(newRange);
+  };
 
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
@@ -32,9 +37,9 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  });
+  }, []);
 
-  const handleSelect = () => {
+  const handleApply = () => {
     onDateChange(range[0].startDate, range[0].endDate);
     toggleOpen();
     setFilter(true);
@@ -42,17 +47,15 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
 
   const clearFilter = () => {
     setFilter(false);
-    fetchTransactions();
+    onDateChange(null, null);
     toggleOpen();
   };
 
-  const handleDateChange = (item) => {
-    const newRange = [item.selection];
-    setRange(newRange);
-  };
-
   return (
-    <div className="bg-white rounded-2xl shadow p-2 max-w-md min-w-1/4 relative" ref={dateSelectorRef}>
+    <div
+      className="bg-white rounded-2xl shadow p-2 max-w-md min-w-1/4 relative"
+      ref={dateSelectorRef}
+    >
       {/* Header */}
       <button
         onClick={toggleOpen}
@@ -100,7 +103,7 @@ export default function DateSelector({ onDateChange, fetchTransactions }) {
               Clear
             </button>
             <button
-              onClick={handleSelect}
+              onClick={handleApply}
               className="px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               Apply

@@ -1,7 +1,8 @@
 import axios from "axios";
+import { env } from "@/env.mjs";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
     accept: "application/json",
@@ -17,5 +18,23 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      !error.response ||
+      [500, 502, 503, 504].includes(error.response?.status)
+    ) {
+      if (typeof window !== "undefined") {
+        if (!window.location.pathname.includes("/app-down")) {
+          window.location.href = "/app-down";
+        }
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;

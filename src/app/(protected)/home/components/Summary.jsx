@@ -126,15 +126,17 @@ export default function Summary({ transactions }) {
           </div>
         </div>
       </div>
-      <div className="flex-1 h-80">
-        <Chart
-          chartType="PieChart"
-          data={data}
-          options={options}
-          width={"100%"}
-          height={"100%"}
-        />
-      </div>
+      {transactions.length > 0 && (
+        <div className="flex-1 h-80">
+          <Chart
+            chartType="PieChart"
+            data={data}
+            options={options}
+            width={"100%"}
+            height={"100%"}
+          />
+        </div>
+      )}
     </div>
   );
 }
