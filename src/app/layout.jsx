@@ -3,7 +3,13 @@ import "react-toastify/dist/ReactToastify.css";
 import "tippy.js/dist/tippy.css";
 
 import { Geist, Geist_Mono } from "next/font/google";
+import { Lexend } from "next/font/google";
 import { ToastContainer, Bounce } from "react-toastify";
+
+const lexendSans = Lexend({
+  variable: "--font-lexend-sans",
+  subsets: ["latin"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +31,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lexendSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ToastContainer
           position="bottom-right"

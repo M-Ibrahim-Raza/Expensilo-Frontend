@@ -12,7 +12,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-theme-turquoise-3 shadow-lg">
+    <nav className="sticky top-0 z-50 bg-theme-forest-dark shadow-lg">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Brand */}

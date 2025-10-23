@@ -1,15 +1,13 @@
 "use client";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import NavBar from "@/components/layout/NavBar";
+import NavBar from "@/components/layouts/NavBar";
 
 export default function ProtectedLayout({ children }) {
   return (
-    <div className="min-h-280 bg-gradient-to-br from-theme-turquoise-1 to-green-50">
-        <NavBar />
-      <ProtectedRoute>
-        {children}
-      </ProtectedRoute>
+    <div className="min-h-screen bg-theme-neutral-gray">
+      <NavBar />
+      <ProtectedRoute>{children}</ProtectedRoute>
     </div>
   );
 }

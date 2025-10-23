@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { useEffect, useRef, useState } from "react";
+import { DateRangePicker } from "react-date-range";
 import { ChevronDown, ChevronUp, Calendar } from "lucide-react";
 
 export default function DateSelector({ onDateChange }) {
@@ -81,13 +81,14 @@ export default function DateSelector({ onDateChange }) {
 
       {/* Collapsible Content */}
       {isOpen && (
-        <div className="absolute w-full p-4 bg-white mt-4 border-t border-gray-200 pt-4 animate-fadeIn">
+        <div className="card-base absolute -left-96 bg-black mt-4 border-t border-gray-200 p-4 animate-fadeIn">
           <DateRangePicker
             ranges={range}
+            className=""
             onChange={handleDateChange}
             moveRangeOnFirstSelection={false}
             months={1}
-            direction="horizontal"
+            direction="vertical"
           />
           <div className="flex text-right mt-2 space-x-2 justify-end">
             <button

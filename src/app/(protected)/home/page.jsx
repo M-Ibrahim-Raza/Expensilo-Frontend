@@ -6,14 +6,12 @@ import { useCategories } from "@/hooks/useCategories";
 import { useTransactionModel } from "@/hooks/useTransactionModal";
 import { useDate } from "@/hooks/useDate";
 
-import AddExpenseButton from "./components/AddExpenseButton";
-import AddIncomeButton from "./components/AddIncomeButton";
-import TransactionCard from "./components/TransactionCard";
 import TransactionModal from "./components/TransactionModel";
 import Summary from "./components/Summary";
-import ExportDropdown from "./components/ExportDropdown";
-import DateSelector from "@/components/ui/DateSelector";
+
 import { getTotalBalance, getExpenses } from "@/utils/transaction";
+import TransactionActionsBar from "@/components/ui/TransactionActionsBar";
+import TransactionSection from "@/components/sections/TransactionSection";
 
 export default function HomePage() {
   const {
@@ -62,57 +60,24 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Summary */}
-        <Summary transactions={filteredTransactions} />
+      <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Summary transactions={filteredTransactions} className="mb-6" />
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 my-8">
-          <AddExpenseButton openModal={openNewModal} />
-          <AddIncomeButton openModal={openNewModal} />
-        </div>
+        <TransactionActionsBar
+          className="mb-2"
+          transactions={getExpenses(filteredTransactions)}
+          openNewModal={openNewModal}
+        />
 
-        {/* Expenses Section */}
-        <div className="bg-theme-turquoise-0 rounded-lg shadow-lg p-6 !pt-2">
-          <div className="flex items-center">
-            <div className="flex flex-1 justify-start">
-              <DateSelector onDateChange={setDateRange} />
-            </div>
-            <div className="flex flex-1 justify-end">
-              <ExportDropdown
-                transactions={getExpenses(filteredTransactions)}
-              />
-            </div>
-          </div>
-          <h2 className="text-3xl uppercase font-bold font-sans text-theme-blue-2 mb-6 text-center">
-            Expenses
-          </h2>
-
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-blue-2"></div>
-            </div>
-          ) : getExpenses(filteredTransactions).length === 0 ? (
-            <p className="text-theme-blue-2 text-center py-8">
-              No Expenses Yet. Add Your First Expense!
-            </p>
-          ) : (
-            <div className="space-y-4">
-              {/* Transactions Cards */}
-              {getExpenses(filteredTransactions).map((transaction) => (
-                <TransactionCard
-                  key={transaction.id}
-                  transaction={transaction}
-                  openEditModal={openEditModal}
-                  handleDelete={() =>
-                    handleDeleteTransaction(transaction.id, transaction.type)
-                  }
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <TransactionSection
+          className=""
+          heading="Recent Expenses"
+          no_transaction_message="No Expenses Yet. Add Your First Expense!"
+          transactions={getExpenses(filteredTransactions)}
+          onDateChange={setDateRange}
+          handleDeleteTransaction={handleDeleteTransaction}
+          openEditModal={openEditModal}
+        />
       </main>
 
       <TransactionModal

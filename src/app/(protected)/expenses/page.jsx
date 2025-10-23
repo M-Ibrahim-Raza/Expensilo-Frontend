@@ -8,11 +8,11 @@ import { useDate } from "@/hooks/useDate";
 
 import DateSelector from "@/components/ui/DateSelector";
 import ExpenseSummary from "./components/ExpenseSummary";
-import AddExpenseButton from "@/app/(protected)/home/components/AddExpenseButton";
-import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
-import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
+import AddExpenseButton from "@/components/archive/AddExpenseButton";
+import ExportDropdown from "@/components/archive/ExportDropdown";
+import TransactionCard from "@/components/ui/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
-import { getExpenses,getTotalBalance } from "@/utils/transaction";
+import { getExpenses, getTotalBalance } from "@/utils/transaction";
 
 export default function ExpensePage() {
   const {

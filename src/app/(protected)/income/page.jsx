@@ -7,10 +7,10 @@ import { useTransactionModel } from "@/hooks/useTransactionModal";
 import { useDate } from "@/hooks/useDate";
 
 import IncomeSummary from "./components/IncomeSummary";
-import AddIncomeButton from "@/app/(protected)/home/components/AddIncomeButton";
-import TransactionCard from "@/app/(protected)/home/components/TransactionCard";
+import AddIncomeButton from "@/components/archive/AddIncomeButton";
+import TransactionCard from "@/components/ui/TransactionCard";
 import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
-import ExportDropdown from "@/app/(protected)/home/components/ExportDropdown";
+import ExportDropdown from "@/components/archive/ExportDropdown";
 import DateSelector from "@/components/ui/DateSelector";
 import { getIncome, getTotalBalance } from "@/utils/transaction";
 
