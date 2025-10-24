@@ -19,6 +19,7 @@ import {
 import { downloadCSV, downloadPDF } from "@/api/transaction";
 
 export default function TransactionActionsBar({
+  type = null,
   className,
   transactions,
   openNewModal,
@@ -27,34 +28,56 @@ export default function TransactionActionsBar({
     <>
       <div className={`flex justify-between ${className}`}>
         <div className="flex gap-2">
-          <Button
-            onClick={() => openNewModal("INCOME")}
-            variant="default"
-            size="lg"
-            className="bg-theme-teal hover:bg-theme-teal/90"
-          >
-            <BanknoteArrowUp />
-            Add Income
-          </Button>
+          {type ? (
+            type == "INCOME" ? (
+              <Button
+                onClick={() => openNewModal("INCOME")}
+                variant="default"
+                size="lg"
+                className="bg-theme-teal hover:bg-theme-teal/90"
+              >
+                <BanknoteArrowUp />
+                Add Income
+              </Button>
+            ) : (
+              <Button
+                onClick={() => openNewModal("EXPENSE")}
+                variant="default"
+                size="lg"
+                className="bg-theme-rose hover:bg-theme-rose/90"
+              >
+                <BanknoteArrowDown />
+                Add Expense
+              </Button>
+            )
+          ) : (
+            <>
+              <Button
+                onClick={() => openNewModal("INCOME")}
+                variant="default"
+                size="lg"
+                className="bg-theme-teal hover:bg-theme-teal/90"
+              >
+                <BanknoteArrowUp />
+                Add Income
+              </Button>
 
-          <Button
-            onClick={() => openNewModal("EXPENSE")}
-            variant="default"
-            size="lg"
-            className="bg-theme-rose hover:bg-theme-rose/90"
-          >
-            <BanknoteArrowDown />
-            Add Expense
-          </Button>
+              <Button
+                onClick={() => openNewModal("EXPENSE")}
+                variant="default"
+                size="lg"
+                className="bg-theme-rose hover:bg-theme-rose/90"
+              >
+                <BanknoteArrowDown />
+                Add Expense
+              </Button>
+            </>
+          )}
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="default"
-              size="lg"
-              className="bg-theme-forest-dark hover:bg-theme-forest-dark/90"
-            >
+            <Button variant="default" size="lg">
               <Download />
               Export
             </Button>

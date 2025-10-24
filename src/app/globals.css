@@ -53,8 +53,8 @@
 }
 
 @theme inline {
-  --color-background: var(--theme-turquoise-1);
-  --color-foreground: var(--theme-blue-2);
+  --color-background: var(--theme-neutral-gray);
+  --color-foreground: var(--theme-forest-dark);
   --color-theme-red-1: var(--theme-red-1);
   --color-theme-red-2: var(--theme-red-2);
   --color-theme-red-3: var(--theme-red-3);
@@ -111,9 +111,17 @@
   .card-base {
     @apply bg-white shadow-sm border border-gray-200 rounded-xl;
   }
+  .item-card-base {
+    @apply bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl;
+  }
   .headings {
-    /* @apply text-2xl font-semibold text-theme-forest-dark ; */
     @apply text-2xl font-semibold text-theme-forest-dark font-lexend;
+  }
+  .item-card-headings {
+    @apply text-base font-semibold text-theme-forest-dark font-lexend;
+  }
+  .Toastify__toast {
+    @apply !p-6 !font-lexend !bg-theme-neutral-gray !text-theme-forest-dark !border !border-gray-200 !rounded-xl;
   }
 }
 

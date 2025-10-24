@@ -70,12 +70,11 @@ export default function HomePage() {
         />
 
         <TransactionSection
-          className=""
-          heading="Recent Expenses"
-          no_transaction_message="No Expenses Yet. Add Your First Expense!"
+          type="EXPENSE"
           transactions={getExpenses(filteredTransactions)}
           onDateChange={setDateRange}
           handleDeleteTransaction={handleDeleteTransaction}
+          openNewModal={openNewModal}
           openEditModal={openEditModal}
         />
       </main>

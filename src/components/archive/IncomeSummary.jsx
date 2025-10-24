@@ -38,13 +38,6 @@ export default function IncomeSummary({ income }) {
       "#A2D2FF", // baby blue
       "#FFC8DD", // light pink
     ],
-    titleTextStyle: {
-      color: "#31326f",
-      alignment: "center",
-      fontSize: 14,
-      fontName: "Roboto",
-      bold: true,
-    },
     chartArea: {
       left: 40,
       top: 10,
