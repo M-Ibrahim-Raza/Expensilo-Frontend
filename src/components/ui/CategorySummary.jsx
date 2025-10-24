@@ -3,6 +3,7 @@ import {
   formatType,
   getCategoryDistribution,
   getTotalIncome,
+  getTotalExpense,
 } from "@/utils/transaction";
 import { Chart } from "react-google-charts";
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +16,10 @@ export default function CategorySummary({ type, transactions, className }) {
   const transaction_type = formatType(type);
   const chartHeading =
     type == "INCOME" ? "Income Category Overview" : "Expense Category Overview";
+  const totalTransaction =
+    type == "INCOME"
+      ? getTotalIncome(transactions)
+      : getTotalExpense(transactions);
 
   const options = {
     legend: {
@@ -74,7 +79,7 @@ export default function CategorySummary({ type, transactions, className }) {
           }`}
         >
           Rs.{" "}
-          {parseFloat(getTotalIncome(transactions)).toLocaleString(undefined, {
+          {parseFloat(totalTransaction).toLocaleString(undefined, {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
           })}
