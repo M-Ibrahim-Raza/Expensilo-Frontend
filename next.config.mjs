@@ -11,8 +11,6 @@ if (!parsed.success) {
   throw new Error("Environment variable validation failed");
 }
 
-console.log("✅ Environment variables validated successfully.");
-
 export const env = parsed.data;
 
 /** @type {import('next').NextConfig} */

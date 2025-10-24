@@ -1,5 +1,6 @@
 "use client";
 import "react-tooltip/dist/react-tooltip.css";
+import { Separator } from "@/components/ui/separator";
 import {
   getTotalBalance,
   getTotalExpense,
@@ -10,10 +11,10 @@ import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import { Chart } from "react-google-charts";
 
-export default function Summary({ transactions }) {
+export default function Summary({ transactions, className }) {
   const options = {
-    title: "Distribution of Income and Expenses",
-    colors: ["#4fb7b3", "#ff4c4c"],
+    title: null,
+    colors: ["#0f766e", "#e11d48"],
     legend: {
       position: "bottom",
       alignment: "center",
@@ -21,12 +22,6 @@ export default function Summary({ transactions }) {
         color: "#31326f",
         fontSize: 12,
       },
-    },
-    titleTextStyle: {
-      color: "#31326f",
-      fontSize: "14",
-      fontName: "Roboto",
-      alignment: "center",
     },
   };
 
@@ -39,23 +34,28 @@ export default function Summary({ transactions }) {
   const totalBalance = getTotalBalance(transactions);
 
   return (
-    <div className="bg-white flex flex-row justify-evenly items-center shadow-lg rounded-lg p-1">
-      <div className="flex-2 flex flex-col justify-center mb-6 ">
-        <h2 className="text-2xl uppercase font-bold font-sans text-theme-blue-2 mb-2 text-center">
-          Summary
-        </h2>
+    <div
+      id="summary"
+      className={`flex flex-row justify-evenly items-center card-base px-4 py-2 h-80 ${className}`}
+    >
+      <div className="flex-3 flex flex-col justify-around h-full mx-4">
+        <h2 className="headings text-center mb-2 uppercase">Summary</h2>
+
         {/* Income Row */}
         <Link
           data-tooltip-id="income-tip"
           href="/income"
           className="cursor-pointer rounded-md transition"
         >
-          <div className="group flex justify-around items-center hover:border-1 hover:shadow-theme-turquoise-2 hover:shadow-sm hover:bg-theme-turquoise-1/20 hover:border-b-theme-green-3 px-4 py-2 mb-2 bg-theme-turquoise-0 rounded-md">
-            <div className="text-2xl font-semibold text-theme-blue-2">
+          <div
+            id="income-highlights"
+            className="group summary-highlight items-center bg-theme-teal/5 hover:border-1 hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-teal/10 hover:border-theme-forest-dark"
+          >
+            <div className="headings">
               Income <Edit size={18} className="inline group-hover:hidden" />
               <ArrowRight size={20} className="hidden group-hover:inline" />
             </div>
-            <div className="text-2xl font-bold text-theme-turquoise-3">
+            <div className="headings !text-theme-teal">
               + Rs.{" "}
               {parseFloat(getTotalIncome(transactions)).toLocaleString(
                 undefined,
@@ -70,22 +70,22 @@ export default function Summary({ transactions }) {
         <Tooltip
           id="income-tip"
           place="top-end"
-          className="!bg-theme-green-3"
           content="View income details"
         />
+
         {/* Expense Row */}
         <Link
           data-tooltip-id="expense-tip"
           href="/expenses"
           className="cursor-pointer rounded-md transition"
         >
-          <div className="group flex justify-around items-center px-4 py-2 mb-2 bg-theme-red-1/5 rounded-md hover:border-1 hover:shadow-theme-red-2 hover:shadow-sm hover:bg-theme-red-1/10 hover:border-b-theme-red-3">
-            <div className="text-2xl font-semibold text-theme-blue-2">
+          <div className="group summary-highlight items-center bg-theme-rose/5 hover:border-1 hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-rose/10 hover:border-theme-forest-dark">
+            <div className="headings">
               Expense
               <ArrowRight size={20} className="hidden group-hover:inline" />
             </div>
 
-            <div className="text-2xl font-bold text-theme-red-1">
+            <div className="headings !text-theme-rose">
               - Rs.{" "}
               {parseFloat(getTotalExpense(transactions)).toLocaleString(
                 undefined,
@@ -100,24 +100,23 @@ export default function Summary({ transactions }) {
         <Tooltip
           id="expense-tip"
           place="top-end"
-          className="!bg-theme-red-3"
           content="View expense details"
         />
-
-        {/* Divider */}
-        <div className="border-t-2 border-theme-turquoise-2 my-3"></div>
+        <Separator className="my-2" />
 
         {/* Balance Row */}
-        <div className="flex justify-around items-center px-4 py-4 bg-gradient-to-r from-theme-turquoise-1/20 to-theme-turquoise-2/20 rounded-md">
-          <div className="text-2xl font-bold text-theme-blue-2">Balance</div>
+        <div
+          className={`group summary-highlight items-center !py-4 ${
+            totalBalance < 0 ? "bg-theme-rose/5" : "bg-theme-teal/5"
+          }`}
+        >
+          <div className="headings">Balance</div>
           <div
             className={`text-2xl font-bold ${
-              parseFloat(totalBalance) < 0
-                ? "text-theme-red-1"
-                : "text-theme-green-3"
+              totalBalance < 0 ? "text-theme-rose" : "text-theme-teal"
             }`}
           >
-            {parseFloat(totalBalance) < 0 ? "- " : "+ "}
+            {totalBalance < 0 ? "- " : "+ "}
             Rs.{" "}
             {parseFloat(Math.abs(totalBalance)).toLocaleString(undefined, {
               minimumFractionDigits: 0,
@@ -126,16 +125,26 @@ export default function Summary({ transactions }) {
           </div>
         </div>
       </div>
+      {/* Income vs Expense Overview */}
       {transactions.length > 0 && (
-        <div className="flex-1 h-80">
-          <Chart
-            chartType="PieChart"
-            data={data}
-            options={options}
-            width={"100%"}
-            height={"100%"}
-          />
-        </div>
+        <>
+          <Separator orientation="vertical" className="mx-2" />
+          <div
+            id="home-pie-chart"
+            className="flex-2 flex flex-col h-full bg-transparent"
+          >
+            <h2 className="headings text-center my-2 uppercase">
+              Income vs. Expense Overview
+            </h2>
+            <Chart
+              chartType="PieChart"
+              data={data}
+              options={options}
+              width={"100%"}
+              height={"100%"}
+            />
+          </div>
+        </>
       )}
     </div>
   );
