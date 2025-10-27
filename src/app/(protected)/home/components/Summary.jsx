@@ -34,11 +34,17 @@ export default function Summary({ transactions, className }) {
   const totalBalance = getTotalBalance(transactions);
 
   return (
+    // <div
+    //   id="summary"
+    //   className={`flex flex-row justify-evenly items-center card-base px-4 py-2 h-80 ${className}`}
+    // >
+    //   <div className="flex-3 flex flex-col justify-around h-full mx-4">
     <div
       id="summary"
-      className={`flex flex-row justify-evenly items-center card-base px-4 py-2 h-80 ${className}`}
+      className={`flex flex-col md:flex-row justify-evenly items-center gap-4 card-base px-4 py-6 md:py-4 w-full ${className}`}
     >
-      <div className="flex-3 flex flex-col justify-around h-full mx-4">
+      {/* Left Summary Section */}
+      <div className="flex flex-col justify-around w-full md:w-1/2 space-y-3">
         <h2 className="headings text-center mb-2 uppercase">Summary</h2>
 
         {/* Income Row */}
@@ -128,11 +134,12 @@ export default function Summary({ transactions, className }) {
       {/* Income vs Expense Overview */}
       {transactions.length > 0 && (
         <>
-          <Separator orientation="vertical" className="mx-2" />
-          <div
-            id="home-pie-chart"
-            className="flex-2 flex flex-col h-full bg-transparent"
-          >
+          <Separator
+            orientation="vertical"
+            className="hidden md:block mx-2 h-40"
+          />
+          <Separator className="md:hidden my-4" />
+          <div className="flex flex-col items-center justify-center w-full md:w-1/2 h-64">
             <h2 className="headings text-center my-2 uppercase">
               Income vs. Expense Overview
             </h2>
