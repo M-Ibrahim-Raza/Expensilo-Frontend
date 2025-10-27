@@ -96,7 +96,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary: var(--theme-forest-dark);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -154,6 +154,45 @@ body {
   background: var(--color-theme-neutral-gray);
   color: var(--color-theme-forest-dark);
   font-family: var(--font-lexend-sans);
+}
+
+html {
+  font-size: 16px; /* Base font size for desktop */
+}
+
+/* Large desktops (1440px and up) */
+@media (min-width: 1440px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+/* Laptops / tablets landscape (1024px–1439px) */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Tablets portrait (768px–1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Mobile devices (480px–767px) */
+@media (max-width: 767px) and (min-width: 480px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+/* Small mobile (below 480px) */
+@media (max-width: 479px) {
+  html {
+    font-size: 7px;
+  }
 }
 
 .dark {

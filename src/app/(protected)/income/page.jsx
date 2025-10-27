@@ -7,9 +7,9 @@ import { useTransactionModel } from "@/hooks/useTransactionModal";
 import { useDate } from "@/hooks/useDate";
 
 import CategorySummary from "@/components/ui/CategorySummary";
-import TransactionModal from "@/app/(protected)/home/components/TransactionModel";
 import TransactionActionsBar from "@/components/ui/TransactionActionsBar";
 import TransactionSection from "@/components/sections/TransactionSection";
+import TransactionDialog from "@/components/ui/TransactionDialog";
 import { getIncome, getTotalBalance } from "@/utils/transaction";
 
 export default function IncomePage() {
@@ -56,9 +56,11 @@ export default function IncomePage() {
     setShowModal(false);
     setSubmitting(false);
   };
+
+  const balance = getTotalBalance(filteredTransactions);
+
   return (
     <>
-      {/* Main Content */}
       <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <CategorySummary
           type="INCOME"
@@ -83,17 +85,16 @@ export default function IncomePage() {
         />
       </main>
 
-      <TransactionModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        modalType={modalType}
+      <TransactionDialog
+        open={showModal}
+        onOpenChange={setShowModal}
         formData={formData}
         setFormData={setFormData}
         handleSubmit={handleSubmit}
-        submitting={submitting}
-        editingTransaction={editingTransaction}
         categories={categories}
-        balance={getTotalBalance(filteredTransactions)}
+        modalType={modalType}
+        balance={balance}
+        submitting={submitting}
       />
     </>
   );

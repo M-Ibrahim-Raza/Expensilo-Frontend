@@ -3,6 +3,7 @@
 import { Pencil, Trash } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export default function TransactionCard({
@@ -34,9 +35,7 @@ export default function TransactionCard({
             </span>
           </div>
           {transaction.category && (
-            <span className="px-2 py-1 bg-theme-forest-dark  text-white text-xs rounded-full whitespace-nowrap">
-              {transaction.category}
-            </span>
+            <Badge variant="default">{transaction.category}</Badge>
           )}
         </div>
       </div>

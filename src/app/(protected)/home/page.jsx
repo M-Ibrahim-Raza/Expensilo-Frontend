@@ -6,12 +6,12 @@ import { useCategories } from "@/hooks/useCategories";
 import { useTransactionModel } from "@/hooks/useTransactionModal";
 import { useDate } from "@/hooks/useDate";
 
-import TransactionModal from "./components/TransactionModel";
 import Summary from "./components/Summary";
 
 import { getTotalBalance, getExpenses } from "@/utils/transaction";
 import TransactionActionsBar from "@/components/ui/TransactionActionsBar";
 import TransactionSection from "@/components/sections/TransactionSection";
+import TransactionDialog from "@/components/ui/TransactionDialog";
 
 export default function HomePage() {
   const {
@@ -58,6 +58,8 @@ export default function HomePage() {
     setSubmitting(false);
   };
 
+  const balance = getTotalBalance(filteredTransactions);
+
   return (
     <>
       <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -79,17 +81,16 @@ export default function HomePage() {
         />
       </main>
 
-      <TransactionModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        modalType={modalType}
+      <TransactionDialog
+        open={showModal}
+        onOpenChange={setShowModal}
         formData={formData}
         setFormData={setFormData}
         handleSubmit={handleSubmit}
-        submitting={submitting}
-        editingTransaction={editingTransaction}
         categories={categories}
-        balance={getTotalBalance(filteredTransactions)}
+        modalType={modalType}
+        balance={balance}
+        submitting={submitting}
       />
     </>
   );
