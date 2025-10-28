@@ -1,23 +1,22 @@
 "use client";
 import { useEffect } from "react";
-import api from "@/utils/api";
-
-
-const fetchTransactions = async () => {
-  try {
-    const response = await api.get("/users/transaction");
-    return response.data.transactions;
-  } catch (error) {
-    console.error("Error fetching transactions:", error);
-  }
-};
+import { useTransactions } from "@/hooks/useTransactions";
+import { searchTransactions } from "@/utils/transaction";
 
 export default function TestPage() {
+  const {
+    transactions,
+    loading,
+    setTransactions,
+    loadTransactions,
+    addOrUpdateTransaction,
+    handleDeleteTransaction,
+  } = useTransactions();
+
   useEffect(() => {
-    fetchTransactions()
-      .then((data) => console.log("Transactions:", data))
-      .catch((err) => console.error(err));
-  }, []);
+    console.log(transactions);
+    console.log(searchTransactions(transactions,"test","Category"))
+  });
 
   return <div>Check the console for results.</div>;
 }

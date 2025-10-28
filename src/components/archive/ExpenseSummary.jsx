@@ -55,6 +55,7 @@ export default function ExpenseSummary({ expense }) {
     backgroundColor: "transparent",
   };
 
+
   return (
     <div
       className={`bg-white flex flex-col justify-evenly items-center shadow-lg rounded-lg px-4 py-2 w-full max-w-full ${

@@ -1,6 +1,8 @@
 "use client";
-import { Wallet, LogOut, User, Settings, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Wallet, LogOut, User, Settings, Menu, X } from "lucide-react";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 export default function NavBar() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -16,31 +18,30 @@ export default function NavBar() {
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Brand */}
-          <div className="flex items-center space-x-2">
-            <Wallet className="w-8 h-8 text-theme-turquoise-0" />
-            <span className="text-2xl font-bold text-white">Expensilo</span>
-          </div>
+          <Link href="/home">
+            <div className="flex items-center space-x-2">
+              <Wallet className="w-8 h-8 text-theme-turquoise-0" />
+              <span className="text-2xl font-bold text-white">Expensilo</span>
+            </div>
+          </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a
-              href="/home"
-              className="text-white hover:text-theme-turquoise-0 transition"
-            >
-              Home
-            </a>
-            <a
-              href="/expenses"
-              className="text-white hover:text-theme-turquoise-0 transition"
-            >
-              Expenses
-            </a>
-            <a
-              href="/income"
-              className="text-white hover:text-theme-turquoise-0 transition"
-            >
-              Income
-            </a>
+          <div className="hidden md:flex items-center space-x-4">
+            <Button variant="link" size="lg">
+              <Link href="/home" className="text-white text-base">
+                Home
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/expenses" className="text-white text-base">
+                Expenses
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Income
+              </Link>
+            </Button>
             {/* <a
               href="#analytics"
               className="text-white hover:text-theme-turquoise-0 transition"
@@ -49,6 +50,10 @@ export default function NavBar() {
             </a> */}
 
             {/* Profile Dropdown */}
+            <Button variant="outline" size="icon-lg" className="rounded-full">
+              <User className="!w-6 !h-6"/>
+            </Button>
+
             <div className="relative">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
