@@ -50,9 +50,9 @@ export default function NavBar() {
             </a> */}
 
             {/* Profile Dropdown */}
-            <Button variant="outline" size="icon-lg" className="rounded-full">
+            {/* <Button variant="outline" size="icon-lg" className="rounded-full">
               <User className="!w-6 !h-6"/>
-            </Button>
+            </Button> */}
 
             <div className="relative">
               <button
