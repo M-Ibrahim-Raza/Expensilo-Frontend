@@ -67,3 +67,18 @@ export function getCategoryDistribution(transactions) {
 
   return Object.entries(categoryTotals);
 }
+
+export function searchTransactions(transactions, searchValue, column) {
+  if ((searchValue === "")) {
+    return transactions;
+  }
+  const allowed = ["title", "category", "amount", "details"];
+  if (!allowed.includes(column.toLowerCase())) return [];
+
+  const query = searchValue.trim().toLowerCase();
+
+  return transactions.filter((tx) => {
+    const value = (tx[column.toLowerCase()] || "").toString().toLowerCase();
+    return value.includes(query);
+  });
+}

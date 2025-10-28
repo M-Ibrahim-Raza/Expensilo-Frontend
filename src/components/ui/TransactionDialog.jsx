@@ -8,6 +8,12 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 import { FieldSet, Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -76,42 +82,45 @@ export default function TransactionDialog({
             {/* Amount */}
             <Field>
               <FieldLabel htmlFor="amount">Amount *</FieldLabel>
-              <Input
-                id="amount"
-                type="number"
-                step="1"
-                min="0"
-                placeholder="e.g. 2500"
-                value={formData.amount}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/[^\d.]/g, "");
-                  const parts = value.split(".");
-                  if (parts.length > 2) return;
-                  const integerPart = parts[0].slice(0, 8);
-                  const decimalPart = parts[1]?.slice(0, 2);
-                  value = decimalPart
-                    ? `${integerPart}.${decimalPart}`
-                    : integerPart;
+              <InputGroup>
+                <InputGroupAddon>Rs.</InputGroupAddon>
+                <InputGroupInput
+                  id="amount"
+                  type="number"
+                  step="1"
+                  min="0"
+                  placeholder="e.g. 2500"
+                  value={formData.amount}
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/[^\d.]/g, "");
+                    const parts = value.split(".");
+                    if (parts.length > 2) return;
+                    const integerPart = parts[0].slice(0, 8);
+                    const decimalPart = parts[1]?.slice(0, 2);
+                    value = decimalPart
+                      ? `${integerPart}.${decimalPart}`
+                      : integerPart;
 
-                  if (value === "" || Number(value) >= 0) {
-                    if (modalType === "EXPENSE") {
-                      if (!(balance < 0)) {
-                        if (editingTransaction) {
-                          setIsBalanceNegative(
-                            Number(value) >
-                              balance + Number(editingTransaction.amount)
-                          );
+                    if (value === "" || Number(value) >= 0) {
+                      if (modalType === "EXPENSE") {
+                        if (!(balance < 0)) {
+                          if (editingTransaction) {
+                            setIsBalanceNegative(
+                              Number(value) >
+                                balance + Number(editingTransaction.amount)
+                            );
+                          } else {
+                            setIsBalanceNegative(Number(value) > balance);
+                          }
                         } else {
-                          setIsBalanceNegative(Number(value) > balance);
+                          setIsBalanceNegative(false);
                         }
-                      } else {
-                        setIsBalanceNegative(false);
                       }
+                      setFormData({ ...formData, amount: value });
                     }
-                    setFormData({ ...formData, amount: value });
-                  }
-                }}
-              />
+                  }}
+                />
+              </InputGroup>
               {isBalanceNegative && (
                 <FieldError>
                   ⚠︎ Amount exceeds available balance. Please double-check it.
