@@ -1,6 +1,7 @@
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import "tippy.js/dist/tippy.css";
+import { StyledEngineProvider } from "@mui/material/styles";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import { Lexend } from "next/font/google";

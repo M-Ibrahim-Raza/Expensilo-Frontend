@@ -75,7 +75,7 @@ export default function TransactionActionsBar({
           )}
         </div>
 
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="default" size="lg">
               <Download />

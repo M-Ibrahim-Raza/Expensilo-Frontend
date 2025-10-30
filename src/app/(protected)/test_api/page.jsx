@@ -1,22 +1,60 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { ChevronDown, Calendar, Coins, ArrowDown, ArrowUp } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
-import { searchTransactions } from "@/utils/transaction";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function TestPage() {
-  const {
-    transactions,
-    loading,
-    setTransactions,
-    loadTransactions,
-    addOrUpdateTransaction,
-    handleDeleteTransaction,
-  } = useTransactions();
+  const [sortColumn, setSortColumn] = useState("created_at");
+  const [isDescending, setIsDescending] = useState(true);
 
-  useEffect(() => {
-    console.log(transactions);
-    console.log(searchTransactions(transactions,"test","Category"))
-  });
+  return (
+    <div className="flex justify-center mt-10">
+      <ButtonGroup>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="lg">
+              {sortColumn}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setSortColumn("created_at")}>
+              <Calendar />
+              Date
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSortColumn("amount")}>
+              <Coins />
+              Amount
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-  return <div>Check the console for results.</div>;
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => setIsDescending((prev) => !prev)}
+          aria-label="Toggle sort direction"
+        >
+          {isDescending ? (
+            <>
+              Desc <ArrowDown />
+            </>
+          ) : (
+            <>
+              Asc <ArrowUp />
+            </>
+          )}
+        </Button>
+      </ButtonGroup>
+    </div>
+  );
 }

@@ -8,7 +8,12 @@ import {
 import { Chart } from "react-google-charts";
 import { Separator } from "@/components/ui/separator";
 
-export default function CategorySummary({ type, transactions, className }) {
+export default function CategorySummary({
+  type,
+  transactions,
+  className,
+  showTotal = true,
+}) {
   const data = getCategoryDistribution(transactions);
 
   data.unshift(["Category", "Amount"]);
@@ -67,28 +72,30 @@ export default function CategorySummary({ type, transactions, className }) {
         transactions && data.length > 1 && "h-96"
       } ${className}`}
     >
-      <div
-        className={`summary-highlight items-center ${
-          type == "EXPENSE" ? "bg-theme-rose/5" : "bg-theme-teal/5"
-        }`}
-      >
-        <div className="headings">{`Total ${transaction_type}`}</div>
+      {showTotal === true && (
         <div
-          className={`headings ${
-            type == "EXPENSE" ? "!text-theme-rose" : "!text-theme-teal"
+          className={`summary-highlight items-center ${
+            type == "EXPENSE" ? "bg-theme-rose/5" : "bg-theme-teal/5"
           }`}
         >
-          Rs.{" "}
-          {parseFloat(totalTransaction).toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}
+          <div className="headings">{`Total ${transaction_type}`}</div>
+          <div
+            className={`headings ${
+              type == "EXPENSE" ? "!text-theme-rose" : "!text-theme-teal"
+            }`}
+          >
+            Rs.{" "}
+            {parseFloat(totalTransaction).toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {transactions && data.length > 1 && (
         <>
-          <Separator className="my-2" />
+          {showTotal === true && <Separator className="my-2" />}
           <h2 className="headings text-center my-2 uppercase">
             {chartHeading}
           </h2>
