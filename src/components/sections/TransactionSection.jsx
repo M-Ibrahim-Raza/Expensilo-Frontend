@@ -5,14 +5,15 @@ import {
   BanknoteArrowDown,
   CircleGauge,
   Search,
+  ChevronDown,
+  Calendar,
+  Coins,
+  ArrowDown,
+  ArrowUp,
 } from "lucide-react";
-
 import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import DateSelector from "@/components/ui/DateSelector";
-import TransactionCard from "@/components/ui/TransactionCard";
-import { searchTransactions } from "@/utils/transaction";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   InputGroup,
   InputGroupAddon,
@@ -25,6 +26,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import DateSelector from "@/components/ui/DateSelector";
+import TransactionCard from "@/components/ui/TransactionCard";
+import { searchTransactions, sortTransactions } from "@/utils/transaction";
 
 export default function TransactionSection({
   className,
@@ -70,6 +75,8 @@ export default function TransactionSection({
 
   const [searchOption, setSearchOption] = useState("Title");
   const [searchValue, setSearchValue] = useState("");
+  const [sortColumn, setSortColumn] = useState("created_at");
+  const [isDescending, setIsDescending] = useState(true);
 
   return (
     <>
@@ -77,6 +84,43 @@ export default function TransactionSection({
         <div className="flex flex-row justify-between items-center mb-2">
           <h2 className="headings text-center">{heading}</h2>
           <div className="flex justify-center items-center flex-row gap-2">
+            <ButtonGroup>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="default">
+                    {sortColumn === "created_at" ? "Date" : "Amount"}
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setSortColumn("created_at")}>
+                    <Calendar />
+                    Date
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSortColumn("amount")}>
+                    <Coins />
+                    Amount
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button
+                variant="outline"
+                size="default"
+                onClick={() => setIsDescending((prev) => !prev)}
+                aria-label="Toggle sort direction"
+              >
+                {isDescending ? (
+                  <>
+                    Desc <ArrowDown />
+                  </>
+                ) : (
+                  <>
+                    Asc <ArrowUp />
+                  </>
+                )}
+              </Button>
+            </ButtonGroup>
             <InputGroup>
               <InputGroupInput
                 value={searchValue}
@@ -94,7 +138,7 @@ export default function TransactionSection({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton variant="outline">
-                      {searchOption}
+                      {searchOption} <ChevronDown />
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -152,18 +196,20 @@ export default function TransactionSection({
           </div>
         ) : (
           <div className="space-y-4">
-            {searchTransactions(transactions, searchValue, searchOption).map(
-              (transaction) => (
-                <TransactionCard
-                  key={transaction.id}
-                  transaction={transaction}
-                  openEditModal={openEditModal}
-                  handleDelete={() =>
-                    handleDeleteTransaction(transaction.id, transaction.type)
-                  }
-                />
-              )
-            )}
+            {sortTransactions(
+              searchTransactions(transactions, searchValue, searchOption),
+              sortColumn,
+              isDescending
+            ).map((transaction) => (
+              <TransactionCard
+                key={transaction.id}
+                transaction={transaction}
+                openEditModal={openEditModal}
+                handleDelete={() =>
+                  handleDeleteTransaction(transaction.id, transaction.type)
+                }
+              />
+            ))}
           </div>
         )}
       </div>

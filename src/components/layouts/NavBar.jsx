@@ -1,16 +1,32 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Wallet, LogOut, User, Settings, Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { logout } from "@/api/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function NavBar() {
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    logout();
+    router.push("/login");
   };
 
   return (
@@ -26,7 +42,7 @@ export default function NavBar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center">
             <Button variant="link" size="lg">
               <Link href="/home" className="text-white text-base">
                 Home
@@ -42,46 +58,38 @@ export default function NavBar() {
                 Income
               </Link>
             </Button>
-            {/* <a
-              href="#analytics"
-              className="text-white hover:text-theme-turquoise-0 transition"
-            >
-              Analytics
-            </a> */}
+            <Button variant="link" size="lg">
+              <Link href="/analytics" className="text-white text-base">
+                Analytics
+              </Link>
+            </Button>
 
             {/* Profile Dropdown */}
-            {/* <Button variant="outline" size="icon-lg" className="rounded-full">
-              <User className="!w-6 !h-6"/>
-            </Button> */}
-
-            <div className="relative">
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="w-10 h-10 rounded-full bg-theme-turquoise-0 flex items-center justify-center hover:ring-2 hover:ring-white transition"
-              >
-                <User className="w-6 h-6 text-theme-blue-2" />
-              </button>
-
-              {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2">
-                  <button className="w-full px-4 py-2 text-left hover:bg-theme-turquoise-1 flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span>Profile</span>
-                  </button>
-                  <button className="w-full px-4 py-2 text-left hover:bg-theme-turquoise-1 flex items-center space-x-2">
-                    <Settings className="w-4 h-4" />
-                    <span>Settings</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left hover:bg-theme-turquoise-1 flex items-center space-x-2 text-red-600"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              )}
-            </div>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon-lg"
+                  className="rounded-full"
+                >
+                  <User className="!w-6 !h-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <User />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                  <LogOut />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile Menu Button */}
@@ -99,37 +107,37 @@ export default function NavBar() {
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="md:hidden pb-4 space-y-2">
-            <a
-              href="#expenses"
-              className="block text-white hover:text-theme-turquoise-0 py-2"
-            >
-              Expenses
-            </a>
-            <a
-              href="#income"
-              className="block text-white hover:text-theme-turquoise-0 py-2"
-            >
-              Income
-            </a>
-            <a
-              href="#analytics"
-              className="block text-white hover:text-theme-turquoise-0 py-2"
-            >
-              Analytics
-            </a>
-            <button className="w-full text-left text-white hover:text-theme-turquoise-0 py-2">
-              Profile
-            </button>
-            <button className="w-full text-left text-white hover:text-theme-turquoise-0 py-2">
-              Settings
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full text-left text-red-300 hover:text-red-200 py-2"
-            >
-              Logout
-            </button>
+          <div className="md:hidden flex flex-col items-start pb-4 space-y-2">
+            <Button variant="link" size="lg">
+              <Link href="/expenses" className="text-white text-base">
+                Expenses
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Income
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Analytics
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Profile
+              </Link>
+            </Button>
+            <Button variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Settings
+              </Link>
+            </Button>
+            <Button onClick={handleLogout} variant="link" size="lg">
+              <Link href="/income" className="text-white text-base">
+                Logout
+              </Link>
+            </Button>
           </div>
         )}
       </div>

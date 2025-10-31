@@ -4,15 +4,31 @@ export function formatType(type) {
 }
 
 export function getExpenses(transactions) {
-  return transactions
-    .filter((transaction) => transaction.type === "EXPENSE")
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return transactions.filter((transaction) => transaction.type === "EXPENSE");
 }
 
 export function getIncome(transactions) {
-  return transactions
-    .filter((transaction) => transaction.type === "INCOME")
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return transactions.filter((transaction) => transaction.type === "INCOME");
+}
+
+export function sortTransactions(transactions, column, isDescending = true) {
+  if (!["created_at", "amount"].includes(column)) {
+    throw new Error("Invalid column. Allowed: 'created_at' or 'amount'");
+  }
+
+  return [...transactions].sort((a, b) => {
+    let valA, valB;
+
+    if (column === "created_at") {
+      valA = new Date(a.created_at).getTime();
+      valB = new Date(b.created_at).getTime();
+    } else {
+      valA = parseFloat(a.amount);
+      valB = parseFloat(b.amount);
+    }
+
+    return isDescending ? valB - valA : valA - valB;
+  });
 }
 
 export function getTotalExpense(transactions) {
@@ -69,7 +85,7 @@ export function getCategoryDistribution(transactions) {
 }
 
 export function searchTransactions(transactions, searchValue, column) {
-  if ((searchValue === "")) {
+  if (searchValue === "") {
     return transactions;
   }
   const allowed = ["title", "category", "amount", "details"];
