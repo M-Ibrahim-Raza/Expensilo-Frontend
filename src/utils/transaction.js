@@ -67,23 +67,6 @@ export function filterTransactionsByDate(transactions, startDate, endDate) {
   return filtered;
 }
 
-export function getCategoryDistribution(transactions) {
-  const categoryTotals = transactions.reduce((acc, transaction) => {
-    const { category, amount } = transaction;
-    const numericAmount = parseFloat(amount);
-
-    if (!acc[category]) {
-      acc[category] = numericAmount;
-    } else {
-      acc[category] += numericAmount;
-    }
-
-    return acc;
-  }, {});
-
-  return Object.entries(categoryTotals);
-}
-
 export function searchTransactions(transactions, searchValue, column) {
   if (searchValue === "") {
     return transactions;

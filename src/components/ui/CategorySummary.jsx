@@ -1,89 +1,44 @@
 "use client";
 import {
   formatType,
-  getCategoryDistribution,
   getTotalIncome,
   getTotalExpense,
 } from "@/utils/transaction";
-import { Chart } from "react-google-charts";
+import { PieChart } from "@mui/x-charts/PieChart";
+import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { Separator } from "@/components/ui/separator";
+import { getCategoryDistribution, getSparkLineData } from "@/utils/charts";
 
-export default function CategorySummary({
-  type,
-  transactions,
-  className,
-  showTotal = true,
-}) {
-  const data = getCategoryDistribution(transactions);
+export default function CategorySummary({ type, transactions, className }) {
+  const pieChartData = getCategoryDistribution(transactions);
+  const sparkLineDate = getSparkLineData(transactions);
 
-  data.unshift(["Category", "Amount"]);
+  const transactionType = formatType(type);
 
-  const transaction_type = formatType(type);
   const chartHeading =
     type == "INCOME" ? "Income Category Overview" : "Expense Category Overview";
+
   const totalTransaction =
     type == "INCOME"
       ? getTotalIncome(transactions)
       : getTotalExpense(transactions);
 
-  const options = {
-    legend: {
-      position: "right",
-      alignment: "center",
-      textStyle: {
-        color: "#31326f",
-        fontSize: 14,
-      },
-    },
-    colors: [
-      "#8AD1C2", // soft teal
-      "#9F8AD1", // lavender purple
-      "#D18A99", // muted rose
-      "#BCD18A", // olive green
-      "#D1C28A", // warm beige
-      "#6CB2E0", // cool sky blue
-      "#F2A88C", // peach
-      "#A8E6CF", // mint
-      "#FFD3B6", // soft apricot
-      "#FFAAA5", // coral pink
-      "#D4A5A5", // dusty pink
-      "#A0CED9", // pastel cyan
-      "#CBAACB", // soft violet
-      "#B5EAD7", // light mint green
-      "#FFDAC1", // cream peach
-      "#E2F0CB", // pale lime
-      "#C7CEEA", // powder lavender
-      "#F3C5C5", // rose mist
-      "#A2D2FF", // baby blue
-      "#FFC8DD", // light pink
-    ],
-    chartArea: {
-      left: 40,
-      top: 10,
-      width: "100%",
-      height: "90%",
-    },
-    pieHole: 0,
-    backgroundColor: "transparent",
-  };
+  const color = type == "INCOME" ? "#0f766e" : "#e11d48";
+
   return (
     <div
-      className={`flex flex-col card-base px-4 py-2 ${
-        transactions && data.length > 1 && "h-96"
-      } ${className}`}
+      className={`main-card card-base flex flex-col md:flex-row md:h-80 px-4 py-2 ${className}`}
     >
-      {showTotal === true && (
-        <div
-          className={`summary-highlight items-center ${
-            type == "EXPENSE" ? "bg-theme-rose/5" : "bg-theme-teal/5"
-          }`}
-        >
-          <div className="headings">{`Total ${transaction_type}`}</div>
+      <div className="transaction-box flex h-32 md:h-full md:flex-1 flex-row bg-white rounded-xl border-3 border-theme-forest-dark/85 p-4">
+        <div className="flex-1 flex flex-col gap-1 justify-center">
           <div
-            className={`headings ${
-              type == "EXPENSE" ? "!text-theme-rose" : "!text-theme-teal"
+            className={`font-semibold text-xl ${
+              type === "EXPENSE" ? "text-theme-rose" : "text-theme-teal"
             }`}
           >
+            {transactionType}
+          </div>
+          <div className="font-bold text-2xl">
             Rs.{" "}
             {parseFloat(totalTransaction).toLocaleString(undefined, {
               minimumFractionDigits: 0,
@@ -91,22 +46,63 @@ export default function CategorySummary({
             })}
           </div>
         </div>
-      )}
-
-      {transactions && data.length > 1 && (
-        <>
-          {showTotal === true && <Separator className="my-2" />}
-          <h2 className="headings text-center my-2 uppercase">
-            {chartHeading}
-          </h2>
-          <div className="flex-1 w-full">
-            <Chart
-              chartType="PieChart"
-              data={data}
-              options={options}
-              width="100%"
-              height="100%"
+        {transactions && sparkLineDate.length > 1 && (
+          <div className="flex-2">
+            <SparkLineChart
+              data={sparkLineDate}
+              color={color}
+              height={undefined}
             />
+          </div>
+        )}
+      </div>
+
+      {transactions && pieChartData.length > 1 && (
+        <>
+          <Separator orientation="vertical" className="hidden md:block mx-4" />
+          <Separator className="md:hidden my-4" />
+
+          <div className="flex-1">
+            <h2 className="headings text-center my-2 uppercase">
+              {chartHeading}
+            </h2>
+            <div className="flex-1 flex flex-col w-full h-[77%] items-center justify-center">
+              <PieChart
+                sx={{
+                  "& .MuiPieArcLabel-root": {
+                    fill: "#ffffff",
+                    fontWeight: 600,
+                  },
+                }}
+                series={[
+                  {
+                    data: getCategoryDistribution(transactions),
+                    valueFormatter: (item) => (
+                      <div className="flex flex-col text-sm">
+                        <span>Rs. {item.value}</span>
+                        <span className="text-gray-500">
+                          {item.percentage}%
+                        </span>
+                      </div>
+                    ),
+
+                    arcLabel: (item) => `${item.percentage}%`,
+                    arcLabelMinAngle: 35,
+                    arcLabelRadius: "60%",
+                    innerRadius: 30,
+                    cornerRadius: 5,
+                    highlightScope: { fade: "global", highlight: "item" },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -10,
+                      color: "gray",
+                    },
+                  },
+                ]}
+                width={undefined}
+                height={undefined}
+              />
+            </div>
           </div>
         </>
       )}
