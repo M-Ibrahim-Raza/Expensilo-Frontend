@@ -7,9 +7,9 @@ import {
   getTotalIncome,
 } from "@/utils/transaction";
 import { ArrowRight, Edit } from "lucide-react";
+import { PieChart } from "@mui/x-charts/PieChart";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
-import { Chart } from "react-google-charts";
 
 export default function Summary({ transactions, className }) {
   const options = {
@@ -25,23 +25,31 @@ export default function Summary({ transactions, className }) {
     },
   };
 
+  const income = getTotalIncome(transactions);
+  const expense = getTotalExpense(transactions);
+  const balance = getTotalBalance(transactions);
+
   const data = [
-    ["Transaction", "Amount"],
-    ["Income", getTotalIncome(transactions)],
-    ["Expense", getTotalExpense(transactions)],
+    {
+      id: 0,
+      label: "Income",
+      value: income,
+      percentage: Math.round((income / balance) * 100),
+      color: "#0f766e",
+    },
+    {
+      id: 1,
+      label: "Expense",
+      value: expense,
+      percentage: Math.round((expense / balance) * 100),
+      color: "#e11d48",
+    },
   ];
 
-  const totalBalance = getTotalBalance(transactions);
-
   return (
-    // <div
-    //   id="summary"
-    //   className={`flex flex-row justify-evenly items-center card-base px-4 py-2 h-80 ${className}`}
-    // >
-    //   <div className="flex-3 flex flex-col justify-around h-full mx-4">
     <div
       id="summary"
-      className={`flex flex-col md:flex-row justify-evenly items-center gap-4 card-base px-4 py-6 md:py-4 w-full ${className}`}
+      className={`flex flex-col md:flex-row justify-evenly items-center gap-4 card-base px-4 py-6 md:py-4 w-full md:h-80 ${className}`}
     >
       {/* Left Summary Section */}
       <div className="flex flex-col justify-around w-full md:w-1/2 space-y-3">
@@ -55,7 +63,7 @@ export default function Summary({ transactions, className }) {
         >
           <div
             id="income-highlights"
-            className="group summary-highlight items-center bg-theme-teal/5 hover:border-1 hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-teal/10 hover:border-theme-forest-dark"
+            className="group summary-highlight items-center bg-theme-teal/5 border-1 border-transparent hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-teal/10 hover:border-theme-forest-dark"
           >
             <div className="headings">
               Income <Edit size={18} className="inline group-hover:hidden" />
@@ -63,13 +71,10 @@ export default function Summary({ transactions, className }) {
             </div>
             <div className="headings !text-theme-teal">
               + Rs.{" "}
-              {parseFloat(getTotalIncome(transactions)).toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                }
-              )}
+              {parseFloat(income).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
             </div>
           </div>
         </Link>
@@ -85,7 +90,7 @@ export default function Summary({ transactions, className }) {
           href="/expenses"
           className="cursor-pointer rounded-md transition"
         >
-          <div className="group summary-highlight items-center bg-theme-rose/5 hover:border-1 hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-rose/10 hover:border-theme-forest-dark">
+          <div className="group summary-highlight items-center bg-theme-rose/5 border-1 border-transparent hover:shadow-theme-forest-dark hover:shadow-sm hover:bg-theme-rose/10 hover:border-theme-forest-dark">
             <div className="headings">
               Expense
               <ArrowRight size={20} className="hidden group-hover:inline" />
@@ -93,13 +98,10 @@ export default function Summary({ transactions, className }) {
 
             <div className="headings !text-theme-rose">
               - Rs.{" "}
-              {parseFloat(getTotalExpense(transactions)).toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                }
-              )}
+              {parseFloat(expense).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
             </div>
           </div>
         </Link>
@@ -113,18 +115,18 @@ export default function Summary({ transactions, className }) {
         {/* Balance Row */}
         <div
           className={`group summary-highlight items-center !py-4 ${
-            totalBalance < 0 ? "bg-theme-rose/5" : "bg-theme-teal/5"
+            balance < 0 ? "bg-theme-rose/5" : "bg-theme-teal/5"
           }`}
         >
           <div className="headings">Balance</div>
           <div
             className={`text-2xl font-bold ${
-              totalBalance < 0 ? "text-theme-rose" : "text-theme-teal"
+              balance < 0 ? "text-theme-rose" : "text-theme-teal"
             }`}
           >
-            {totalBalance < 0 ? "- " : "+ "}
+            {balance < 0 ? "- " : "+ "}
             Rs.{" "}
-            {parseFloat(Math.abs(totalBalance)).toLocaleString(undefined, {
+            {parseFloat(Math.abs(balance)).toLocaleString(undefined, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             })}
@@ -136,19 +138,44 @@ export default function Summary({ transactions, className }) {
         <>
           <Separator
             orientation="vertical"
-            className="hidden md:block mx-2 h-40"
+            className="hidden md:block mx-2"
           />
           <Separator className="md:hidden my-4" />
-          <div className="flex flex-col items-center justify-center w-full md:w-1/2 h-64">
+          <div className="flex flex-1 flex-col items-center h-full justify-center w-full md:w-1/2">
             <h2 className="headings text-center my-2 uppercase">
               Income vs. Expense Overview
             </h2>
-            <Chart
-              chartType="PieChart"
-              data={data}
-              options={options}
-              width={"100%"}
-              height={"100%"}
+            <PieChart
+              sx={{
+                "& .MuiPieArcLabel-root": {
+                  fill: "#ffffff",
+                  fontWeight: 600,
+                },
+              }}
+              series={[
+                {
+                  data: data,
+                  valueFormatter: (item) => (
+                    <div className="flex flex-col text-sm">
+                      <span>Rs. {item.value}</span>
+                      <span className="text-gray-500">{item.percentage}%</span>
+                    </div>
+                  ),
+                  arcLabel: (item) => `${item.percentage}%`,
+                  arcLabelMinAngle: 35,
+                  arcLabelRadius: "60%",
+                  innerRadius: 30,
+                  cornerRadius: 5,
+                  highlightScope: { fade: "global", highlight: "item" },
+                  faded: {
+                    innerRadius: 30,
+                    additionalRadius: -10,
+                    color: "gray",
+                  },
+                },
+              ]}
+              width={undefined}
+              height={undefined}
             />
           </div>
         </>

@@ -25,7 +25,7 @@ export default function HomePage() {
 
   const { categories, loadCategories } = useCategories();
 
-  console.log(transactions)
+  console.log(transactions);
   const {
     showModal,
     modalType,
