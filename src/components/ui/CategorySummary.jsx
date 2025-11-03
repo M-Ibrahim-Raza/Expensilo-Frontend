@@ -27,10 +27,15 @@ export default function CategorySummary({ type, transactions, className }) {
 
   return (
     <div
-      className={`main-card card-base flex flex-col md:flex-row md:h-80 px-4 py-2 ${className}`}
+      className={`main-card card-base flex flex-col md:flex-row px-4 py-2  ${
+        transactions &&
+        sparkLineDate.length > 1 &&
+        sparkLineDate.length > 1 &&
+        "md:h-80"
+      } ${className}`}
     >
-      <div className="transaction-box flex h-32 md:h-full md:flex-1 flex-row bg-white rounded-xl border-3 border-theme-forest-dark/85 p-4">
-        <div className="flex-1 flex flex-col gap-1 justify-center">
+      <div className="transaction-box flex md:h-full md:flex-1 flex-row bg-white rounded-xl border-3 border-theme-forest-dark/85 p-4 h-32">
+        <div className="flex-1 items-center flex flex-col gap-1 justify-center">
           <div
             className={`font-semibold text-xl ${
               type === "EXPENSE" ? "text-theme-rose" : "text-theme-teal"

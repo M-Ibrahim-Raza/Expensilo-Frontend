@@ -34,14 +34,14 @@ export default function Summary({ transactions, className }) {
       id: 0,
       label: "Income",
       value: income,
-      percentage: Math.round((income / balance) * 100),
+      percentage: Math.round((income / (income + expense)) * 100),
       color: "#0f766e",
     },
     {
       id: 1,
       label: "Expense",
       value: expense,
-      percentage: Math.round((expense / balance) * 100),
+      percentage: Math.round((expense / (income + expense)) * 100),
       color: "#e11d48",
     },
   ];
@@ -136,10 +136,7 @@ export default function Summary({ transactions, className }) {
       {/* Income vs Expense Overview */}
       {transactions.length > 0 && (
         <>
-          <Separator
-            orientation="vertical"
-            className="hidden md:block mx-2"
-          />
+          <Separator orientation="vertical" className="hidden md:block mx-2" />
           <Separator className="md:hidden my-4" />
           <div className="flex flex-1 flex-col items-center h-full justify-center w-full md:w-1/2">
             <h2 className="headings text-center my-2 uppercase">
