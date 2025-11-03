@@ -161,7 +161,9 @@ export default function TransactionDialog({
                     setFormData({ ...formData, category: value });
                   }}
                   onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
+                  onBlur={() => {
+                    setTimeout(() => setIsFocused(false), 150);
+                  }}
                 />
                 {isFocused && formData.category.trim() !== "" && (
                   <CommandList>
@@ -174,10 +176,10 @@ export default function TransactionDialog({
                       .map((category) => (
                         <CommandItem
                           key={category.id}
-                          onSelect={() => {
+                          onSelect={(value) => {
                             setFormData({
                               ...formData,
-                              category: category.name,
+                              category: value,
                             });
                             setIsFocused(false);
                           }}
