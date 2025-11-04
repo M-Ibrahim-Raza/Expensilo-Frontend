@@ -1,177 +1,192 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { signUpSchema } from "@/validations/auth";
+
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import { Eye, EyeOff } from "lucide-react";
+
 import { signup } from "@/api/auth";
-import CardHeading from "../components/CardHeading";
-import FormInput from "../components/FormInput";
 import { useSignUpToastStore } from "@/stores/useSignUpToastStore";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldError,
+  FieldGroup,
+  FieldSet,
+} from "@/components/ui/field";
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
   const router = useRouter();
 
-  const nameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const { setSignUpMessage } = useSignUpToastStore();
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+  } = useForm({ resolver: yupResolver(signUpSchema), mode: "onTouched" });
 
-    setNameError("");
-    setEmailError("");
-    setPasswordError("");
-
-    let isError = false;
-
-    const name = nameRef.current?.value.trim() || "";
-    const email = emailRef.current?.value.trim() || "";
-    const password = passwordRef.current?.value || "";
-    const confirmPassword = confirmPasswordRef.current?.value || "";
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!name) {
-      setNameError("Name is required");
-      isError = true;
-    } else if (name.length < 3) {
-      setNameError("Full Name must be at least 3 characters");
-      isError = true;
-    }
-
-    if (!email) {
-      setEmailError("Email is required");
-      isError = true;
-    } else if (!emailPattern.test(email)) {
-      setEmailError("Invalid email address");
-      isError = true;
-    }
-
-    if (!password) {
-      setPasswordError("Password is required");
-      isError = true;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      isError = true;
-    } else if (!(password === confirmPassword)) {
-      setPasswordError("Passwords do not match");
-      isError = true;
-    }
-
-    if (isError) {
-      return;
-    }
-
+  async function onSubmit(data) {
     setLoading(true);
-
     try {
-      await signup(name, email, password);
+      await signup(data.name, data.email, data.password);
 
       setSignUpMessage("Account created successfully!");
 
       router.push("/login");
-
-      nameRef.current.value = "";
-      emailRef.current.value = "";
-      passwordRef.current.value = "";
-      confirmPasswordRef.current.value = "";
     } catch (err) {
-      setPasswordError(err.message);
+      const msg = err?.message || "server error";
+      if (msg.toLowerCase().includes("password")) {
+        setError("password", { message: msg });
+      } else if (msg.toLowerCase().includes("email")) {
+        setError("email", { message: msg });
+      } else {
+        setError("password", { message: msg });
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <>
-      <div className="bg-white rounded-3xl shadow-2xl p-8">
-        <CardHeading text={"Create Your Account"} />
+    <div className="flex flex-col gap-6">
+      <Card className="card-base border-gray-600 shadow-2xl">
+        <CardHeader>
+          <CardTitle className="headings text-center">
+            Create Your Account
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FieldGroup>
+              <FieldSet>
+                <Field data-invalid={errors.name ? true : undefined}>
+                  <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    {...register("name")}
+                    aria-invalid={errors.name ? true : undefined}
+                  />
+                  {errors.name && (
+                    <FieldError>{errors.name.message}</FieldError>
+                  )}
+                </Field>
 
-        <div className="space-y-2">
-          <FormInput
-            type="text"
-            id="name"
-            label="Full Name"
-            placeholder="Enter your full name"
-            inputRef={nameRef}
-            required
-          />
+                <Field data-invalid={errors.email ? true : undefined}>
+                  <FieldLabel htmlFor="email">Email Address</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    {...register("email")}
+                    aria-invalid={errors.email ? true : undefined}
+                  />
+                  {errors.email && (
+                    <FieldError>{errors.email.message}</FieldError>
+                  )}
+                </Field>
 
-          {nameError && (
-            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
-              {nameError}
-            </div>
-          )}
+                <Field data-invalid={errors.password ? true : undefined}>
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <InputGroup>
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        size="icon-sm"
+                        variant="ghost"
+                        className="rounded-full"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      {...register("password")}
+                      aria-invalid={errors.password ? true : undefined}
+                    />
+                  </InputGroup>
+                  {errors.password && (
+                    <FieldError>{errors.password.message}</FieldError>
+                  )}
+                </Field>
 
-          <FormInput
-            type="email"
-            id="email"
-            label="Email Address"
-            placeholder="Enter your email"
-            inputRef={emailRef}
-            required
-          />
+                <Field data-invalid={errors.confirmPassword ? true : undefined}>
+                  <FieldLabel htmlFor="confirmPassword">
+                    Confirm Password
+                  </FieldLabel>
+                  <InputGroup>
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        size="icon-sm"
+                        variant="ghost"
+                        className="rounded-full"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Re-enter your password"
+                      {...register("confirmPassword")}
+                      aria-invalid={errors.confirmPassword ? true : undefined}
+                    />
+                  </InputGroup>
+                  {errors.confirmPassword && (
+                    <FieldError>{errors.confirmPassword.message}</FieldError>
+                  )}
+                </Field>
 
-          {emailError && (
-            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
-              {emailError}
-            </div>
-          )}
-
-          <FormInput
-            id="password"
-            label="Password"
-            placeholder="Create a strong password"
-            is_password
-            inputRef={passwordRef}
-            required
-          />
-
-          <FormInput
-            id="password"
-            label="Confirm Password"
-            placeholder="confirm your password"
-            is_password
-            inputRef={confirmPasswordRef}
-            required
-          />
-
-          {passwordError && (
-            <div className="p-3 mb-4 rounded-xl text-sm bg-red-50 text-red-600">
-              {passwordError}
-            </div>
-          )}
-
-          <button
-            onClick={handleSignUp}
-            disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
-          </button>
-        </div>
-
-        <p className="text-center mt-6 text-sm text-theme-blue-1">
-          Already have an account?{"  "}
-          <a
-            href="/login"
-            className="font-semibold hover:underline text-theme-blue-2"
-          >
-            Log In
-          </a>
-        </p>
-      </div>
-
-      <p className="text-center mt-6 text-sm text-theme-blue-2">
-        By signing up, you agree to our Terms & Privacy Policy
-      </p>
-    </>
+                <Field>
+                  <Button type="submit" disabled={!isValid || loading}>
+                    {loading ? "Creating Account..." : "Sign Up"}
+                  </Button>
+                  <FieldDescription className="text-center">
+                    Already have an account?{"  "}
+                    <Link href="/login">
+                      <Button variant="link" className="p-0">
+                        Log in
+                      </Button>
+                    </Link>
+                  </FieldDescription>
+                </Field>
+              </FieldSet>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

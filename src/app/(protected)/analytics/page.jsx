@@ -53,14 +53,14 @@ export default function AnalyticsPage() {
       id: 0,
       label: "Income",
       value: income,
-      percentage: Math.round((income / balance) * 100),
+      percentage: Math.round((income / (income + expense)) * 100),
       color: "#0f766e",
     },
     {
       id: 1,
       label: "Expense",
       value: expense,
-      percentage: Math.round((expense / balance) * 100),
+      percentage: Math.round((expense / (income + expense)) * 100),
       color: "#e11d48",
     },
   ];
@@ -70,7 +70,7 @@ export default function AnalyticsPage() {
       <div className="flex justify-end mb-2">
         <DateSelector onDateChange={setDateRange} className="mx-6" />
       </div>
-      <div className="flex gap-2 ">
+      <div className="flex gap-2">
         <div className="flex flex-4 flex-col card-base p-4 gap-2">
           <h2 className="headings">FINANCIAL OVERVIEW</h2>
           <div className="flex-1 flex flex-row gap-2 justify-around">

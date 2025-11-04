@@ -1,25 +1,75 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
+
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "@/validations/auth";
+
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import { Eye, EyeOff } from "lucide-react";
 
 import { login } from "@/api/auth";
 import { useSignUpToastStore } from "@/stores/useSignUpToastStore";
 
-import CardHeading from "../components/CardHeading";
-import FormInput from "../components/FormInput";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldError,
+  FieldGroup,
+  FieldSet,
+} from "@/components/ui/field";
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 import { notifySuccess } from "@/utils/notifications";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const router = useRouter();
 
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const hasShownSignUpToast = useRef(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+  } = useForm({ resolver: yupResolver(loginSchema), mode: "onTouched" });
+
+  async function onSubmit(data) {
+    setLoading(true);
+    try {
+      await login(data.email, data.password);
+      router.push("/home");
+    } catch (err) {
+      const msg = err?.message || "server error";
+      if (msg.toLowerCase().includes("password")) {
+        setError("password", { message: msg });
+      } else if (msg.toLowerCase().includes("email")) {
+        setError("email", { message: msg });
+      } else {
+        setError("password", { message: msg });
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const hasShownSignUpToast = useRef(false);
 
   const { signUpMessage, clearSignUpMessage } = useSignUpToastStore();
 
@@ -31,110 +81,74 @@ export default function SignupPage() {
     }
   }, [signUpMessage]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    setEmailError("");
-    setPasswordError("");
-
-    let isError = false;
-
-    const email = emailRef.current?.value || "";
-    const password = passwordRef.current?.value || "";
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-      setEmailError("Email is required");
-      isError = true;
-    } else if (!emailPattern.test(email)) {
-      setEmailError("Invalid email address");
-      isError = true;
-    }
-
-    if (!password) {
-      setPasswordError("Password is required");
-      isError = true;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      isError = true;
-    }
-
-    if (isError) {
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await login(email, password);
-
-      router.push("/home");
-
-      emailRef.current.value = "";
-      passwordRef.current.value = "";
-    } catch (err) {
-      setPasswordError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <>
-      <div className="bg-white rounded-3xl shadow-2xl p-8">
-        <CardHeading text={"Login Your Account"} />
-
-        <div className="space-y-3">
-          <FormInput
-            type="email"
-            id="email"
-            label="Email Address"
-            placeholder="Enter your email"
-            inputRef={emailRef}
-            required
-          />
-
-          {emailError && (
-            <div className="p-3 mb-6 rounded-xl text-sm bg-red-50 text-red-600">
-              {emailError}
-            </div>
-          )}
-
-          <FormInput
-            id="password"
-            label="Password"
-            placeholder="Enter your password"
-            is_password
-            inputRef={passwordRef}
-            required
-          />
-
-          {passwordError && (
-            <div className="p-3 mb-6 rounded-xl text-sm bg-red-50 text-red-600">
-              {passwordError}
-            </div>
-          )}
-
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:shadow-lg hover:bg-theme-blue-2/95 disabled:opacity-50 bg-theme-blue-2"
-          >
-            {loading ? "Logging In..." : "Log In"}
-          </button>
-        </div>
-
-        <p className="text-center mt-6 text-sm text-theme-blue-1">
-          Don't have an account?{"  "}
-          <a
-            href="/signup"
-            className="font-semibold hover:underline text-theme-blue-2"
-          >
-            Sign Up
-          </a>
-        </p>
-      </div>
-    </>
+    <div className="flex flex-col gap-6">
+      <Card className="card-base border-gray-600 shadow-2xl">
+        <CardHeader>
+          <CardTitle className="headings text-center">
+            Login Your Account
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FieldGroup>
+              <FieldSet>
+                <Field data-invalid={errors.email ? true : undefined}>
+                  <FieldLabel htmlFor="email">Email Address</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    {...register("email")}
+                    aria-invalid={errors.email ? true : undefined}
+                  />
+                  {errors.email && (
+                    <FieldError>{errors.email.message}</FieldError>
+                  )}
+                </Field>
+                <Field data-invalid={errors.password ? true : undefined}>
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <InputGroup>
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        size="icon-sm"
+                        variant="ghost"
+                        className="rounded-full"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      {...register("password")}
+                      aria-invalid={errors.password ? true : undefined}
+                    />
+                  </InputGroup>
+                  {errors.password && (
+                    <FieldError>{errors.password.message}</FieldError>
+                  )}
+                </Field>
+                <Field>
+                  <Button type="submit" disabled={!isValid || loading}>
+                    {loading ? "Logging in..." : "Log in"}
+                  </Button>
+                  <FieldDescription className="text-center">
+                    Don't have an account?{" "}
+                    <Link href="/signup">
+                      <Button variant="link" className="p-0">
+                        Sign up
+                      </Button>
+                    </Link>
+                  </FieldDescription>
+                </Field>
+              </FieldSet>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
