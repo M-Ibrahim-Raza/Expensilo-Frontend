@@ -23,35 +23,28 @@ export default function HomePage() {
     handleDeleteTransaction,
   } = useTransactions();
 
-  const { categories, loadCategories } = useCategories();
-
-  console.log(transactions);
   const {
     showModal,
     modalType,
-    formData,
     editingTransaction,
     setShowModal,
-    setFormData,
     openNewModal,
     openEditModal,
   } = useTransactionModel();
+
+  const { categories, loadCategories } = useCategories();
 
   const { setDateRange, filteredTransactions } = useDate(transactions);
 
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values) => {
     setSubmitting(true);
     const payload = {
-      title: formData.title,
-      amount: parseFloat(formData.amount),
+      ...values,
+      amount: parseFloat(values.amount),
       type: modalType,
-      category: formData.category || undefined,
-      created_at: formData.created_at || undefined,
-      details: formData.details || undefined,
-      attachments:
-        formData.attachments.length > 0 ? formData.attachments : undefined,
+      attachments: undefined,
     };
     await addOrUpdateTransaction(payload, editingTransaction);
     loadCategories();
@@ -85,12 +78,11 @@ export default function HomePage() {
       <TransactionDialog
         open={showModal}
         onOpenChange={setShowModal}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         categories={categories}
         modalType={modalType}
         balance={balance}
+        editingTransaction={editingTransaction}
         submitting={submitting}
       />
     </>

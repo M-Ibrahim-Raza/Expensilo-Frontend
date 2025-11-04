@@ -11,24 +11,31 @@ import {
   ArrowDown,
   ArrowUp,
 } from "lucide-react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupButton,
 } from "@/components/ui/input-group";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Separator } from "@/components/ui/separator";
+
 import DateSelector from "@/components/ui/DateSelector";
+
 import TransactionCard from "@/components/ui/TransactionCard";
+
 import { searchTransactions, sortTransactions } from "@/utils/transaction";
 
 export default function TransactionSection({
@@ -51,27 +58,28 @@ export default function TransactionSection({
       ? "Start tracking your finances by adding your first expense"
       : "Start tracking your finances by adding your first income";
 
-  const add_transaction_button = "EXPENSE" ? (
-    <Button
-      onClick={() => openNewModal("EXPENSE")}
-      variant="default"
-      size="lg"
-      className="bg-theme-rose hover:bg-theme-rose/90"
-    >
-      <BanknoteArrowDown />
-      Add Expense
-    </Button>
-  ) : (
-    <Button
-      onClick={() => openNewModal("INCOME")}
-      variant="default"
-      size="lg"
-      className="bg-theme-teal hover:bg-theme-teal/90"
-    >
-      <BanknoteArrowUp />
-      Add Income
-    </Button>
-  );
+  const add_transaction_button =
+    type === "EXPENSE" ? (
+      <Button
+        onClick={() => openNewModal("EXPENSE")}
+        variant="default"
+        size="lg"
+        className="bg-theme-rose hover:bg-theme-rose/90"
+      >
+        <BanknoteArrowDown />
+        Add Expense
+      </Button>
+    ) : (
+      <Button
+        onClick={() => openNewModal("INCOME")}
+        variant="default"
+        size="lg"
+        className="bg-theme-teal hover:bg-theme-teal/90"
+      >
+        <BanknoteArrowUp />
+        Add Income
+      </Button>
+    );
 
   const [searchOption, setSearchOption] = useState("Title");
   const [searchValue, setSearchValue] = useState("");
@@ -128,6 +136,7 @@ export default function TransactionSection({
                   setSearchValue(e.target.value);
                 }}
                 placeholder="Search..."
+                maxLength={50}
               />
               <InputGroupAddon>
                 <InputGroupButton size="icon-sm" variant="ghost">

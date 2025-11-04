@@ -48,7 +48,7 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors, isValid },
     setError,
-  } = useForm({ resolver: yupResolver(loginSchema), mode: "onTouched" });
+  } = useForm({ resolver: yupResolver(loginSchema), mode: "onChange" });
 
   async function onSubmit(data) {
     setLoading(true);

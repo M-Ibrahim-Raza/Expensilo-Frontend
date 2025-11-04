@@ -49,7 +49,7 @@ export default function SignupPage() {
     handleSubmit,
     formState: { errors, isValid },
     setError,
-  } = useForm({ resolver: yupResolver(signUpSchema), mode: "onTouched" });
+  } = useForm({ resolver: yupResolver(signUpSchema), mode: "onChange" });
 
   async function onSubmit(data) {
     setLoading(true);
@@ -98,7 +98,6 @@ export default function SignupPage() {
                     <FieldError>{errors.name.message}</FieldError>
                   )}
                 </Field>
-
                 <Field data-invalid={errors.email ? true : undefined}>
                   <FieldLabel htmlFor="email">Email Address</FieldLabel>
                   <Input
@@ -112,7 +111,6 @@ export default function SignupPage() {
                     <FieldError>{errors.email.message}</FieldError>
                   )}
                 </Field>
-
                 <Field data-invalid={errors.password ? true : undefined}>
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <InputGroup>
@@ -138,7 +136,6 @@ export default function SignupPage() {
                     <FieldError>{errors.password.message}</FieldError>
                   )}
                 </Field>
-
                 <Field data-invalid={errors.confirmPassword ? true : undefined}>
                   <FieldLabel htmlFor="confirmPassword">
                     Confirm Password
@@ -168,7 +165,6 @@ export default function SignupPage() {
                     <FieldError>{errors.confirmPassword.message}</FieldError>
                   )}
                 </Field>
-
                 <Field>
                   <Button type="submit" disabled={!isValid || loading}>
                     {loading ? "Creating Account..." : "Sign Up"}

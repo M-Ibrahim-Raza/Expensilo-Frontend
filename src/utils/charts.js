@@ -177,7 +177,6 @@ export function getSparkLineData(transactions) {
   if (!Array.isArray(transactions)) return [];
   if (transactions.length <= 1) return [];
 
-  // parse valid timestamps only
   const parsed = transactions
     .map((t) => {
       const d = new Date(t.created_at);
@@ -187,24 +186,22 @@ export function getSparkLineData(transactions) {
     })
     .filter(Boolean);
 
-  if (parsed.length <= 1) return null;
+  if (parsed.length <= 1) return [];
 
-  // sort oldest to latest
   parsed.sort((a, b) => a.ts - b.ts);
 
   const start = parsed[0].ts;
   const end = parsed[parsed.length - 1].ts;
 
   const range = end - start;
-  if (range <= 0) return null;
+  if (range <= 0) return [];
 
-  // 10 bins
   const bins = new Array(10).fill(0);
 
   for (const item of parsed) {
     const ratio = (item.ts - start) / range;
     let idx = Math.floor(ratio * 10);
-    if (idx === 10) idx = 9; // catch exact end boundary
+    if (idx === 10) idx = 9;
     bins[idx] += item.amt;
   }
 
