@@ -127,7 +127,7 @@
 
 @layer components {
   .summary-highlight {
-    @apply flex justify-around px-4 py-2 mb-2 rounded-xl;
+    @apply flex justify-around items-center px-4 py-2 mb-2 rounded-xl;
   }
 }
 
@@ -170,14 +170,14 @@ html {
 /* Laptops / tablets landscape (1024px–1439px) */
 @media (max-width: 1439px) and (min-width: 1024px) {
   html {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
 /* Tablets portrait (768px–1023px) */
 @media (max-width: 1023px) and (min-width: 768px) {
   html {
-    font-size: 15px;
+    font-size: 13px;
   }
 }
 
@@ -191,7 +191,7 @@ html {
 /* Small mobile (below 480px) */
 @media (max-width: 479px) {
   html {
-    font-size: 7px;
+    font-size: 6px;
   }
 }
 
