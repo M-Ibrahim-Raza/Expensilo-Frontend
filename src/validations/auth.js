@@ -17,7 +17,7 @@ const emailSchema = yup
   .email("Email format invalid")
   .required("Email is required")
   .min(6, "Email is too short")
-  .max(254, "Email is too long")
+  .max(100, "Email is too long")
   .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email must contain @ and domain");
 
 const passwordSchema = yup
