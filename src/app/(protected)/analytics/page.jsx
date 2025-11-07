@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
 
         <div
           id="financial-activity"
-          className="flex col-span-1 sm:col-span-2 lg:row-span-2 flex-col card-base p-4 justify-around"
+          className="flex row-start-3 sm:row-start-auto col-span-1 sm:col-span-2 lg:row-span-2 flex-col card-base p-4 justify-around"
         >
           <div className="flex justify-end gap-2">
             <div className="flex-1">
@@ -306,8 +306,13 @@ export default function AnalyticsPage() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Box className="h-48 sm:h-48 lg:h-60">
+          <Box className="h-48 sm:h-auto lg:h-60">
             <PieChart
+              slotProps={{
+                legend: {
+                  hidden: window.innerWidth < 768 ? true : false,
+                },
+              }}
               sx={{
                 "& .MuiPieArcLabel-root": {
                   fill: "#ffffff",
