@@ -70,6 +70,7 @@ export default function CategorySummary({ type, transactions, className }) {
               slotProps={{
                 legend: {
                   direction: "vertical",
+                  hidden: window.innerWidth < 768 ? true : false,
                   position: {
                     vertical: "bottom",
                     horizontal: "center",
