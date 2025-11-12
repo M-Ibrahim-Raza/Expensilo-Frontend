@@ -34,7 +34,7 @@ import { Separator } from "@/components/ui/separator";
 
 import DateSelector from "@/components/ui/DateSelector";
 
-import TransactionCard from "@/components/ui/TransactionCard";
+import TransactionCard from "@/components/mobile/TransactionCard";
 
 import { searchTransactions, sortTransactions } from "@/utils/transaction";
 

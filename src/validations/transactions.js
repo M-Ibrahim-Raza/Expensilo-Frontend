@@ -6,7 +6,7 @@ const titleSchema = yup
   .required("Title is required")
   .matches(/(?:.*[A-Za-z]){3,}/, "Title must contain at least 3 letters")
   .min(3, "Title must contain at least 3 characters")
-  .max(50, "Title can't exceed 50 characters");
+  .max(30, "Title can't exceed 30 characters");
 
 const amountSchema = yup
   .number()

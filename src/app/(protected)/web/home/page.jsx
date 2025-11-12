@@ -6,13 +6,14 @@ import { useCategories } from "@/hooks/useCategories";
 import { useTransactionModel } from "@/hooks/useTransactionModal";
 import { useDate } from "@/hooks/useDate";
 
-import CategorySummary from "@/components/ui/CategorySummary";
+import Summary from "./components/Summary";
+
+import { getTotalBalance, getExpenses } from "@/utils/transaction";
 import TransactionActionsBar from "@/components/ui/TransactionActionsBar";
 import TransactionSection from "@/components/sections/TransactionSection";
-import TransactionDialog from "@/components/ui/TransactionDialog";
-import { getIncome, getTotalBalance } from "@/utils/transaction";
+import TransactionDialog from "@/components/mobile/TransactionDialog";
 
-export default function IncomePage() {
+export default function HomePage() {
   const {
     transactions,
     loading,
@@ -56,22 +57,17 @@ export default function IncomePage() {
   return (
     <>
       <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <CategorySummary
-          type="INCOME"
-          transactions={getIncome(filteredTransactions)}
-          className="mb-6"
-        />
+        <Summary transactions={filteredTransactions} className="mb-6" />
 
         <TransactionActionsBar
-          type="INCOME"
           className="mb-2"
-          transactions={getIncome(filteredTransactions)}
+          transactions={getExpenses(filteredTransactions)}
           openNewModal={openNewModal}
         />
 
         <TransactionSection
-          type="INCOME"
-          transactions={getIncome(filteredTransactions)}
+          type="EXPENSE"
+          transactions={getExpenses(filteredTransactions)}
           onDateChange={setDateRange}
           handleDeleteTransaction={handleDeleteTransaction}
           openNewModal={openNewModal}
