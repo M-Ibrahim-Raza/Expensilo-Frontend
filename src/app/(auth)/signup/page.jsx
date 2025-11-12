@@ -74,10 +74,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card className="card-base border-gray-600 shadow-2xl">
+    <div className="flex flex-col">
+      <Card className="card-base border-gray-600 shadow-2xl gap-4">
         <CardHeader>
-          <CardTitle className="headings text-center">
+          <CardTitle className="headings text-center text-theme-teal-2">
             Create Your Account
           </CardTitle>
         </CardHeader>
@@ -86,7 +86,9 @@ export default function SignupPage() {
             <FieldGroup>
               <FieldSet>
                 <Field data-invalid={errors.name ? true : undefined}>
-                  <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                  <FieldLabel className="text-theme-teal-2" htmlFor="name">
+                    Full Name
+                  </FieldLabel>
                   <Input
                     id="name"
                     type="text"
@@ -99,7 +101,9 @@ export default function SignupPage() {
                   )}
                 </Field>
                 <Field data-invalid={errors.email ? true : undefined}>
-                  <FieldLabel htmlFor="email">Email Address</FieldLabel>
+                  <FieldLabel className="text-theme-teal-2" htmlFor="email">
+                    Email Address
+                  </FieldLabel>
                   <Input
                     id="email"
                     type="email"
@@ -112,7 +116,9 @@ export default function SignupPage() {
                   )}
                 </Field>
                 <Field data-invalid={errors.password ? true : undefined}>
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <FieldLabel className="text-theme-teal-2" htmlFor="password">
+                    Password
+                  </FieldLabel>
                   <InputGroup>
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -137,7 +143,10 @@ export default function SignupPage() {
                   )}
                 </Field>
                 <Field data-invalid={errors.confirmPassword ? true : undefined}>
-                  <FieldLabel htmlFor="confirmPassword">
+                  <FieldLabel
+                    className="text-theme-teal-2"
+                    htmlFor="confirmPassword"
+                  >
                     Confirm Password
                   </FieldLabel>
                   <InputGroup>
@@ -166,13 +175,17 @@ export default function SignupPage() {
                   )}
                 </Field>
                 <Field>
-                  <Button type="submit" disabled={!isValid || loading}>
+                  <Button
+                    className="bg-theme-teal-2 hover:bg-theme-teal-2/90"
+                    type="submit"
+                    disabled={!isValid || loading}
+                  >
                     {loading ? "Creating Account..." : "Sign Up"}
                   </Button>
                   <FieldDescription className="text-center">
                     Already have an account?{"  "}
                     <Link href="/login">
-                      <Button variant="link" className="p-0">
+                      <Button variant="link" className="p-0 text-theme-teal-2">
                         Log in
                       </Button>
                     </Link>

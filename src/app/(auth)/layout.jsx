@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import BrandSection from "./components/BrandSection";
+import BrandSection from "@/components/auth/BrandSection";
 
 export default function AuthLayout({ children }) {
   return (

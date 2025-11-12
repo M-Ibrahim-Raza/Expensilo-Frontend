@@ -9,7 +9,7 @@ import { useDate } from "@/hooks/useDate";
 import CategorySummary from "@/components/ui/CategorySummary";
 import TransactionActionsBar from "@/components/ui/TransactionActionsBar";
 import TransactionSection from "@/components/sections/TransactionSection";
-import TransactionDialog from "@/components/ui/TransactionDialog";
+import TransactionDialog from "@/components/mobile/TransactionDialog";
 import { getExpenses, getTotalBalance } from "@/utils/transaction";
 
 export default function ExpensePage() {
