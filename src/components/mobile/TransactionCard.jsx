@@ -2,6 +2,7 @@
 
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { formatDateShort } from "@/utils/transaction";
 
 export default function TransactionCard({ transaction, openViewModal }) {
   const isExpense = transaction.type === "EXPENSE";
@@ -19,10 +20,10 @@ export default function TransactionCard({ transaction, openViewModal }) {
               {transaction.title}
             </h3>
           </div>
-          <div className="flex flex-row gap-3">
+          <div className="flex flex-row gap-2">
             <div className="flex items-center gap-2 text-xs">
               <span className="text-gray-400">
-                {new Date(transaction.created_at).toLocaleDateString()}
+                {formatDateShort(transaction.created_at)}
               </span>
             </div>
             {transaction.category && (
@@ -32,14 +33,17 @@ export default function TransactionCard({ transaction, openViewModal }) {
             )}
           </div>
         </div>
-
         <div
-          className={`text-end headings ${
-            transaction.amount.toString().length >= 10 ? "!text-base" : "!text-xl"
-          }  ${isExpense ? " !text-theme-rose" : " !text-theme-teal"}`}
+          className={`text-end headings !text-xl ${
+            isExpense ? "!text-theme-rose" : "!text-theme-teal"
+          }`}
         >
           {isExpense ? "- " : "+ "}Rs.{" "}
-          {parseFloat(transaction.amount).toLocaleString()}
+          {transaction?.amount
+            ? transaction.amount >= 100000
+              ? (transaction.amount / 1000).toLocaleString() + "k"
+              : parseFloat(transaction.amount).toLocaleString()
+            : "0"}
         </div>
       </div>
       <Separator className="my-4 bg-theme-teal-2/20" />

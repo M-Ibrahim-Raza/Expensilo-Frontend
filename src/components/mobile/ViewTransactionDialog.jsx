@@ -11,6 +11,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+import { formatDateShort } from "@/utils/transaction";
+
 export default function ViewTransactionDialog({
   open,
   onOpenChange,
@@ -20,8 +22,6 @@ export default function ViewTransactionDialog({
   handleEdit,
 }) {
   const isExpense = modalType === "EXPENSE";
-
-  console.log(transaction);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -47,12 +47,16 @@ export default function ViewTransactionDialog({
               Amount
             </span>
             <span
-              className={`flex-1 flex items-center text-start headings !text-base ${
+              className={`flex-1 flex items-center text-start headings  ${
                 isExpense ? " !text-theme-rose" : " !text-theme-teal"
               }`}
             >
               {isExpense ? "- " : "+ "}Rs.{" "}
-              {parseFloat(transaction?.amount || 0).toLocaleString()}
+              {transaction?.amount
+                ? transaction.amount >= 100000
+                  ? (transaction.amount / 1000).toLocaleString() + "k"
+                  : parseFloat(transaction.amount).toLocaleString()
+                : "0"}
             </span>
           </div>
 
@@ -62,7 +66,7 @@ export default function ViewTransactionDialog({
             </span>
             <span className="flex-1 flex items-center text-base font-semibold text-foreground">
               {transaction?.created_at
-                ? new Date(transaction.created_at).toLocaleDateString()
+                ? formatDateShort(transaction.created_at)
                 : "—"}
             </span>
           </div>

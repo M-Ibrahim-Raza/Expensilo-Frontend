@@ -26,6 +26,7 @@ export function useDate(transactions = []) {
   };
 
   return {
+    dateRange: dateRange,
     setDateRange: updateDateRange,
     filteredTransactions,
   };

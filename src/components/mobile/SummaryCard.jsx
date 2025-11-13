@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
+
 import { Ellipsis, BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import { PieChart } from "@mui/x-charts/PieChart";
 
 import {
   getTotalBalance,
@@ -10,10 +14,38 @@ import {
   getTotalIncome,
 } from "@/utils/transaction";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+
 export default function SummaryCard({ transactions }) {
   const income = getTotalIncome(transactions);
   const expense = getTotalExpense(transactions);
   const balance = getTotalBalance(transactions);
+
+  const [openPieChartDialog, openPieChartDialogChange] = useState(false);
+
+  const data = [
+    {
+      id: 0,
+      label: "Income",
+      value: income,
+      percentage: Math.round((income / (income + expense)) * 100),
+      color: "#0f766e",
+    },
+    {
+      id: 1,
+      label: "Expense",
+      value: expense,
+      percentage: Math.round((expense / (income + expense)) * 100),
+      color: "#e11d48",
+    },
+  ];
 
   return (
     <>
@@ -35,7 +67,11 @@ export default function SummaryCard({ transactions }) {
           </div>
         </div>
         <div className="flex justify-end" id="icon">
-          <Button variant="ghost" className="">
+          <Button
+            onClick={() => openPieChartDialogChange((prev) => !prev)}
+            variant="ghost"
+            className=""
+          >
             <Ellipsis className="!w-8 !h-8" />
           </Button>
         </div>
@@ -65,6 +101,61 @@ export default function SummaryCard({ transactions }) {
           </div>
         </div>
       </div>
+      <Dialog open={openPieChartDialog} onOpenChange={openPieChartDialogChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              Income vs. Expense Overview
+              <div className="h-52 pt-4">
+                <PieChart
+                  slotProps={{
+                    legend: {
+                      direction: "vertical",
+                      position: {
+                        vertical: "center",
+                        horizontal: "start",
+                      },
+                    },
+                  }}
+                  sx={{
+                    "& .MuiPieArcLabel-root": {
+                      fill: "#ffffff",
+                      fontWeight: 600,
+                    },
+                  }}
+                  series={[
+                    {
+                      data: data,
+                      valueFormatter: (item) => (
+                        <div className="flex flex-col text-sm">
+                          <span>Rs. {item.value}</span>
+                          <span className="text-gray-500">
+                            {item.percentage}%
+                          </span>
+                        </div>
+                      ),
+                      arcLabel: (item) => `${item.percentage}%`,
+                      arcLabelMinAngle: 35,
+                      arcLabelRadius: "70%",
+                      innerRadius: 10,
+                      cornerRadius: 5,
+                      highlightScope: { fade: "global", highlight: "item" },
+                      faded: {
+                        innerRadius: 30,
+                        additionalRadius: -10,
+                        color: "gray",
+                      },
+                    },
+                  ]}
+                  width={undefined}
+                  height={undefined}
+                />
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row justify-center"></DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
