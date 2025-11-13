@@ -8,7 +8,7 @@
   --theme-forest-dark: #34423a;
   --theme-teal: #0f766e;
   --theme-rose: #e11d48;
-  --theme-teal-1: #60afa9;
+  --theme-teal-1: #3a8e88;
   --theme-teal-2: #046e67;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -137,7 +137,7 @@
 body {
   background: var(--color-theme-neutral-gray);
   color: var(--color-black);
-  
+
   font-family: var(--font-lexend-sans);
 }
 

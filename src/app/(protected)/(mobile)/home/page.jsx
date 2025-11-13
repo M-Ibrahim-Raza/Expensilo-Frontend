@@ -60,14 +60,7 @@ export default function HomePage() {
 
   return (
     <>
-      <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-theme-neutral-gray">
-        {/* <div
-          id="background"
-          className="absolute -top-[70%] -left-[50%] w-[200%] h-[100%] bg-theme-teal-1 rounded-b-full mx-auto"
-        ></div> */}
-        {/* <div className="relative">
-          <div className="h-12"></div>
-        </div> */}
+      <main className="mx-auto px-4 sm:px-6 lg:px-8 py-2 min-h-screen bg-theme-neutral-gray">
         <SummaryCard transactions={transactions} />
 
         <RecentTransactionSection

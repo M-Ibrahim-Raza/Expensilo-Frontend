@@ -3,6 +3,42 @@ export function formatType(type) {
   return type[0].toUpperCase() + type.slice(1).toLowerCase();
 }
 
+export function isSameDate(d1, d2) {
+  if (
+    !(d1 instanceof Date) ||
+    isNaN(d1) ||
+    !(d2 instanceof Date) ||
+    isNaN(d2)
+  ) {
+    return false;
+  }
+
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
+}
+
+export function formatDateShort(dateInput) {
+  const date = new Date(dateInput);
+
+  const day = date.getDate();
+  const suffix =
+    day % 10 === 1 && day !== 11
+      ? "st"
+      : day % 10 === 2 && day !== 12
+      ? "nd"
+      : day % 10 === 3 && day !== 13
+      ? "rd"
+      : "th";
+
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const year = date.getFullYear().toString().slice(-2);
+
+  return `${day}${suffix} ${month} ${year}`;
+}
+
 export function getExpenses(transactions) {
   return transactions.filter((transaction) => transaction.type === "EXPENSE");
 }
